@@ -35,10 +35,14 @@ class ConstantManager {
   static int ALL_NOTIFICATION_UNSUCCESS = 106;
   static int ALL_AD_SUCCESS = 107;
   static int ALL_AD_UNSUCCESS = 108;
+  static int ALl_CATEGORY_SUCCESS = 109;
+  static int ALl_CATEGORY_UNSUCCESS = 110;
+
 
 
 
   static String USER_MODEL = "USER_MODEL";
+
 
 
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,11 +9,13 @@ import 'package:testproject/Factory/Factory.dart';
 import 'package:http/http.dart' as http;
 import 'package:testproject/Models/Requests/login_request.dart';
 import 'package:testproject/Models/Requests/registration_request.dart';
-import 'package:testproject/Models/Response/adevertisement_all_base_reponse.dart';
+import 'package:testproject/Models/Response/category_all_base_reponse.dart';
 import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/Models/Response/notification_all_response.dart';
 import 'package:testproject/Models/Response/registration_response.dart';
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
+
+import 'Models/Response/advertisement_all_base_response.dart';
 
 class DataProvider {
   void sign_up(
@@ -29,18 +31,24 @@ class DataProvider {
     if (_progressDialogCodeListener != null)
       _progressDialogCodeListener.onShow();
 
-    final response = await http.post(
-      Uri.parse(ConstantManager.base_url + "User/SystemUserRegistration"),
-      // headers: <String, String>{
-      //   'Content-Type': 'application/json; charset=UTF-8',
-      // },
-      body: _request.toJson(),
+    // final response = await http.post(
+    //   Uri.parse(ConstantManager.base_url + "User/SystemUserRegistration"),
+    //   // headers: <String, String>{
+    //   //   'Content-Type': 'application/json; charset=UTF-8',
+    //   // },
+    //   body: _request.toJson(),
+    // );
+    var dio = Dio(Factory().getDioOption());
+    final response = await dio.request('User/SystemUserRegistration',
+      options: Options(method: 'POST'),
+      data: _request.toJson()
     );
+
 
     if (response.statusCode == 200) {
       // then parse the JSON.
       RegistrationResponse res =
-          RegistrationResponse.fromJson(jsonDecode(response.body));
+          RegistrationResponse.fromJson(response.data);
       if (res.response!.responseCode == 0)
         _progressDialogCodeListener.onHide(
             ConstantManager.SIGN_UP_SUCCESS, "Success", Null);
@@ -50,9 +58,7 @@ class DataProvider {
     } else {
       // then throw an exception.
       _progressDialogCodeListener.onDismiss("error");
-      RegistrationResponse res =
-          RegistrationResponse.fromJson(jsonDecode(response.body));
-      throw Exception('Failed to create.' + response.body);
+      throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 
@@ -68,17 +74,24 @@ class DataProvider {
 
     if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
 
-    final response = await http.post(
-      Uri.parse(ConstantManager.base_url + "User/SystemUserLogin"),
-      // headers: <String, String>{
-      //   'Content-Type': 'application/json; charset=UTF-8',
-      // },
-      body: request.toJson(),
+    // final response = await http.post(
+    //   Uri.parse(ConstantManager.base_url + "User/SystemUserLogin"),
+    //   // headers: <String, String>{
+    //   //   'Content-Type': 'application/json; charset=UTF-8',
+    //   // },
+    //   body: request.toJson(),
+    // );
+
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('User/SystemUserLogin',
+      options: Options(method: 'POST'),
+      data: request.toJson()
     );
 
     if (response.statusCode == 200) {
       // then parse the JSON.
-      LoginResponse res = LoginResponse.fromJson(jsonDecode(response.body));
+      LoginResponse res = LoginResponse.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
             ConstantManager.SIGN_IN_SUCCESS, "Success", Null);
@@ -93,7 +106,7 @@ class DataProvider {
       progressDialogCodeListener.onDismiss("error");
       RegistrationResponse res =
           // RegistrationResponse.fromJson(jsonDecode(response.body));
-          throw Exception('Failed to create.' + response.body);
+          throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 
@@ -108,17 +121,23 @@ class DataProvider {
 
     if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
 
-    final response = await http.get(
-      Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetNotificationtAll"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetNotificationtAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('MemberShipAccount/SystemGetNotificationtAll',
+      options: Options(method: 'GET'),
     );
 
     if (response.statusCode == 200) {
       // then parse the JSON.
       NotificationAllResponse res =
-          NotificationAllResponse.fromJson(jsonDecode(response.body));
+          NotificationAllResponse.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
             ConstantManager.ALL_NOTIFICATION_SUCCESS, "Success", res);
@@ -132,7 +151,7 @@ class DataProvider {
       progressDialogCodeListener.onDismiss("error");
       RegistrationResponse res =
           // RegistrationResponse.fromJson(jsonDecode(response.body));
-          throw Exception('Failed to create.' + response.body);
+          throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 
@@ -147,17 +166,27 @@ class DataProvider {
 
     if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
 
-    final response = await http.get(
-      Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('MemberShipAccount/SystemGetAdvertisementAll',
+        options: Options(method: 'GET'),
     );
+    print("Data Here:"+response.data.toString());
+
+
 
     if (response.statusCode == 200) {
       // then parse the JSON.
-      AdevertisementAllBaseReponse res =
-      AdevertisementAllBaseReponse.fromJson(jsonDecode(response.body));
+      AdvertisementAllBaseResponse res =
+            AdvertisementAllBaseResponse.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
             ConstantManager.ALL_AD_SUCCESS, "Success", res);
@@ -171,7 +200,56 @@ class DataProvider {
       progressDialogCodeListener.onDismiss("error");
       RegistrationResponse res =
       // RegistrationResponse.fromJson(jsonDecode(response.body));
-      throw Exception('Failed to create.' + response.body);
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  void getCategoryAll(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('Item/SystemCategoryAll',
+      options: Options(method: 'GET'),
+    );
+    print("Data Here:"+response.data.toString());
+
+
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      CategoryAllBaseReponse res =
+      CategoryAllBaseReponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALl_CATEGORY_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALl_CATEGORY_UNSUCCESS,
+            res.response!.responseMessage,
+            Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 

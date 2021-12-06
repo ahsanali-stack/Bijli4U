@@ -5,6 +5,7 @@ import 'dart:ffi';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -195,5 +196,13 @@ class Factory {
   String get_image_url(String url)
   {
     return "${ConstantManager.image_base_url}${url}";
+  }
+
+  getDioOption(){
+    return BaseOptions(
+      baseUrl: ConstantManager.base_url,
+      connectTimeout: 10000,
+      receiveTimeout: 10000,
+    );
   }
 }

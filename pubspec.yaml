@@ -37,7 +37,8 @@ dependencies:
   dio: ^4.0.4
   intl: ^0.17.0
   carousel_slider: ^4.0.0
-
+  toggle_switch: ^1.3.0
+  flutter_rating_bar: ^4.0.0
   flutter:
     sdk: flutter
 
@@ -65,16 +66,16 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: Trebuc
+      fonts:
+        - asset: assets/fonts/trebuc.ttf
 
   # The following line ensures that the Material Icons Fonts is
   # included with your application, so that you can use the icons in
   # the material Icons class.
 
-  fonts:
-    - family: Trebuc
-      fonts:
-        - asset: assets/fonts/trebuc.ttf
-          style: italic
+
 
 
   assets:

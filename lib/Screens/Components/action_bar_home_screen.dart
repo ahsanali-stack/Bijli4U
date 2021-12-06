@@ -13,6 +13,7 @@ import 'package:testproject/Models/Response/login_response.dart';
 class ActionBarHomeScreen {
   PreferredSizeWidget getActionBar(BuildContext context){
     return AppBar(
+      elevation: 0,
       toolbarHeight: 70,
       backgroundColor: Color(colors.color_primary),
       title: Row(
