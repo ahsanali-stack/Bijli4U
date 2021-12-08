@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Factory/Factory.dart';
-import 'package:testproject/Screens/Components/action_bar_simple.dart';
-import 'package:testproject/Screens/favorite_screen.dart';
-import 'package:testproject/Screens/home_screen.dart';
-import 'package:testproject/Screens/make_a_post_screen.dart';
-import 'package:testproject/Screens/notification_screen.dart';
-import 'package:testproject/Screens/settings_screen.dart';
-import 'package:testproject/Screens/splash_screen_2.dart';
+import 'package:testproject/UI/Components/action_bar_simple.dart';
+import 'package:testproject/UI/Favorite/favorite_screen.dart';
+import 'package:testproject/UI/Home/home_screen.dart';
+import 'package:testproject/UI/MakeAPost/make_a_post_screen.dart';
+import 'package:testproject/UI/Notification/notification_screen.dart';
+import 'package:testproject/UI/Settings/settings_screen.dart';
+import 'package:testproject/UI/Splash/splash_screen_2.dart';
 
 import 'Components/action_bar_home_screen.dart';
 
@@ -26,6 +26,7 @@ class HomeScreen extends StatefulWidget {
 
 class Screen extends State<HomeScreen> {
   late int current_index = 0;
+  final pages = [Home(),Favorites(),MakePost(),NotificationScreen(),Settings()];
 
   onItemTap(int index){
     setState(() {
@@ -35,12 +36,15 @@ class Screen extends State<HomeScreen> {
 
 
 
-
+  // IndexedStack(
+  // index: current_index,
+  // children: pages,
+  // )
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: _buildScreen(),
+      body:_buildScreen(),
       appBar: buildAppBar(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,

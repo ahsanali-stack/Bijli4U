@@ -16,6 +16,7 @@ class ConstantManager {
   static const String bijli4ULogoGif = "assets/images/bijli4ulogogif.gif";
   static const String arrow_right = "assets/icons/arrow_right.png";
   static const String generator_img = "assets/images/generator.jpg";
+  static const String no_preview = "assets/images/no_preview.jpg";
 
   static const String slogan =
       "Explore million's of Energy & Power Equipment's";
@@ -37,11 +38,15 @@ class ConstantManager {
   static int ALL_AD_UNSUCCESS = 108;
   static int ALl_CATEGORY_SUCCESS = 109;
   static int ALl_CATEGORY_UNSUCCESS = 110;
+  static int ALL_ITEM_SUCCESS = 111;
+  static int ALL_ITEM_UNSUCCESS = 111;
+
 
 
 
 
   static String USER_MODEL = "USER_MODEL";
+
 
 
 

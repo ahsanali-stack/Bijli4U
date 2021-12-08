@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Factory/Factory.dart';
-import 'package:testproject/Screens/sign_in_screen.dart';
-import 'package:testproject/Screens/sign_up_screen.dart';
+import 'package:testproject/UI/SignIn/sign_in_screen.dart';
+import 'package:testproject/UI/SignUp/sign_up_screen.dart';
 
 void main() => MaterialApp(
     debugShowCheckedModeBanner: false,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
-import 'package:testproject/DataProvider.dart';
+import 'package:testproject/DataProvider/DataProvider.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/notification_all_response.dart';
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
@@ -65,7 +65,7 @@ class Screen extends State<NotificationScreen> implements ProgressDialogCodeList
                                       color: Color(colors.color_primary)),
                                 ),//
                                 Text(
-                                Factory().get_string_date_from_unix(all_notifcations[index].notificationStartTimeSlot!),
+                                  Factory().get_string_date_from_unix(all_notifcations[index].notificationStartTimeSlot!),
                                   style: TextStyle(
                                       fontSize: 6,
                                       color: Color(colors.color_primary)),
@@ -130,18 +130,18 @@ class Screen extends State<NotificationScreen> implements ProgressDialogCodeList
       });
 
     if(code == ConstantManager.ALL_NOTIFICATION_SUCCESS)
+    {
+      response = data as NotificationAllResponse;
+      if(response.result!.length>0)
       {
-        response = data as NotificationAllResponse;
-        if(response.result!.length>0)
-          {
-            all_notifcations =[];
-            all_notifcations.addAll(response.result!);
-          }
+        all_notifcations =[];
+        all_notifcations.addAll(response.result!);
       }
+    }
     else if(code == ConstantManager.ALL_NOTIFICATION_UNSUCCESS)
-      {
-        Factory().showSnackbar(context, message!);
-      }
+    {
+      Factory().showSnackbar(context, message!);
+    }
   }
 
   @override
