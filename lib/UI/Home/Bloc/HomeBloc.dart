@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/DataProvider/DataProvider.dart';
@@ -22,10 +24,13 @@ class HomeBloc implements ProgressDialogCodeListener{
   final advertisementList = BehaviorSubject<List<AD.Result>>();
   //
   final categoryAllBaseResponse = BehaviorSubject<CAT.CategoryAllBaseReponse>();
-  final categoryList = PublishSubject<List<CAT.Result>>();
+  final categoryList = BehaviorSubject<List<CAT.Result>>();
   //
   final allItemBaseResponse = BehaviorSubject<ITEM.AllItemBaseResponse>();
   final itemsList = BehaviorSubject<List<ITEM.Result>>();
+  //
+  final mIndex = BehaviorSubject<int>();
+  final toggleIndex = BehaviorSubject<int>();
 
   //methods here
   getAllAdvertisement() => DataProvider().getAllAdvertisement(_context, this);
@@ -54,7 +59,10 @@ class HomeBloc implements ProgressDialogCodeListener{
     else if (code == ConstantManager.ALl_CATEGORY_SUCCESS) {
       if ((data as CAT.CategoryAllBaseReponse).result!.length > 0) {
         categoryAllBaseResponse.sink.add(data as CAT.CategoryAllBaseReponse);
-        categoryList.sink.add(categoryAllBaseResponse.stream.value.result!);
+        List<CAT.Result> catList = [];
+        catList.add(CAT.Result(categoryID:0,category:"All",createdBy:null,createdDate:"",active:true,deleted:false,lastUpdatedDate: "",lastUpdatedBy: ""));
+        catList.addAll(categoryAllBaseResponse.stream.value.result!);
+        categoryList.sink.add(catList);
       }
     }
     else if (code == ConstantManager.ALl_CATEGORY_UNSUCCESS) {
@@ -64,6 +72,7 @@ class HomeBloc implements ProgressDialogCodeListener{
       if ((data as ITEM.AllItemBaseResponse).result!.length > 0) {
         allItemBaseResponse.sink.add(data as ITEM.AllItemBaseResponse);
         itemsList.sink.add(allItemBaseResponse.value.result!);
+
       }
     }
     else if (code == ConstantManager.ALL_ITEM_UNSUCCESS) {
@@ -73,6 +82,37 @@ class HomeBloc implements ProgressDialogCodeListener{
 
   @override
   void onShow() {
-    showingSink.add(true);
+    // showingSink.add(true);
+
+    _showMyDialog();
+
   }
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: _context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('AlertDialog Title'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('This is a demo alert dialog.'),
+                Text('Would you like to approve of this message?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Approve'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

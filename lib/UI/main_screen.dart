@@ -8,7 +8,7 @@ import 'package:testproject/UI/Home/home_screen.dart';
 import 'package:testproject/UI/MakeAPost/make_a_post_screen.dart';
 import 'package:testproject/UI/Notification/notification_screen.dart';
 import 'package:testproject/UI/Settings/settings_screen.dart';
-import 'package:testproject/UI/Splash/splash_screen_2.dart';
+import 'package:testproject/UI/Splash/main.dart';
 
 import 'Components/action_bar_home_screen.dart';
 

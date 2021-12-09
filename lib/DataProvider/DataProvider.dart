@@ -205,7 +205,7 @@ class DataProvider {
     }
   }
 
-  void getCategoryAll(BuildContext context,
+  Future<void> getCategoryAll(BuildContext context,
       ProgressDialogCodeListener progressDialogCodeListener) async {
     //check connectivity
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -230,6 +230,7 @@ class DataProvider {
       options: Options(method: 'GET'),
     );
     print("Data Here:"+response.data.toString());
+
 
 
 

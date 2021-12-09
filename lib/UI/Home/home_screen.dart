@@ -9,7 +9,6 @@ import 'package:testproject/DataProvider/DataProvider.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/advertisement_all_base_response.dart'
     as AD;
-import 'package:testproject/Models/Response/advertisement_all_base_response.dart';
 import 'package:testproject/Models/Response/all_item_base_response.dart' as ALL_ITEM;
 import 'package:testproject/Models/Response/category_all_base_reponse.dart'
     as CAT;
@@ -43,7 +42,11 @@ class Screen extends State<Home> implements ProgressDialogCodeListener {
   @override
   void initState() {
     bloc = HomeBloc(context);
+    bloc.mIndex.sink.add(0);
+    bloc.toggleIndex.sink.add(0);
     bloc.getAllAdvertisement();
+    bloc.getAllCategory();
+    bloc.getAllItems(item_sale_type_id);
     // DataProvider().getAllAdvertisement(context, this);
     // DataProvider().getCategoryAll(context, this);
     // DataProvider().getAllItems(context, this, item_sale_type_id);
@@ -68,8 +71,7 @@ class Screen extends State<Home> implements ProgressDialogCodeListener {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      StreamBuilder(stream: bloc.advertiseme
-                        ntList.stream, builder: (BuildContext context, AsyncSnapshot<List<Result>> ad_list) {
+                      StreamBuilder(stream: bloc.advertisementList.stream, builder: (BuildContext context, AsyncSnapshot<List<AD.Result>> ad_list) {
                         return CarouselSlider.builder(
                             options: CarouselOptions(
                               height: 120,
@@ -105,36 +107,42 @@ class Screen extends State<Home> implements ProgressDialogCodeListener {
                       },),
                       Padding(
                         padding: EdgeInsets.only(top: 20),
-                        child: ToggleSwitch(
-                          borderWidth: 1.5,
-                          borderColor: [
-                            Color(colors.color_primary),
-                            Color(colors.color_primary)
-                          ],
-                          dividerColor: Color(colors.color_primary),
-                          minWidth: 100.0,
-                          cornerRadius: 6.0,
-                          activeBgColors: [
-                            [Color(colors.color_slogan)],
-                            [Color(colors.color_slogan)]
-                          ],
-                          activeFgColor: Colors.white,
-                          inactiveBgColor: Colors.white,
-                          inactiveFgColor: Color(colors.color_primary),
-                          initialLabelIndex: labelIndex,
-                          totalSwitches: 2,
-                          labels: ['Rent', 'Buy'],
-                          radiusStyle: true,
-                          onToggle: (index) {
-                            if (index == 0) {
-                              labelIndex = index;
-                              item_sale_type_id = 2; // Rent id = 2
-                              DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
-                            } else if (index == 1) {
-                              labelIndex = index;
-                              item_sale_type_id = 1; // Buy id = 1
-                              DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
-                            }
+                        child: StreamBuilder(
+                          stream: bloc.toggleIndex.stream,
+                          builder: (BuildContext context, AsyncSnapshot<int> labeIndex) {
+                            return ToggleSwitch(
+                              borderWidth: 1.5,
+                              borderColor: [
+                                Color(colors.color_primary),
+                                Color(colors.color_primary)
+                              ],
+                              dividerColor: Color(colors.color_primary),
+                              minWidth: 100.0,
+                              cornerRadius: 6.0,
+                              activeBgColors: [
+                                [Color(colors.color_slogan)],
+                                [Color(colors.color_slogan)]
+                              ],
+                              activeFgColor: Colors.white,
+                              inactiveBgColor: Colors.white,
+                              inactiveFgColor: Color(colors.color_primary),
+                              initialLabelIndex: labeIndex.data,
+                              totalSwitches: 2,
+                              labels: ['Rent', 'Buy'],
+                              radiusStyle: true,
+                              onToggle: (index) {
+                                bloc.toggleIndex.sink.add(index);
+                                if (index == 0) {
+                                  item_sale_type_id = 2; // Rent id = 2
+                                  bloc.getItemByCategory(item_sale_type_id, category_id);
+                                  // DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
+                                } else if (index == 1) {
+                                  item_sale_type_id = 1; // Buy id = 1
+                                  bloc.getItemByCategory(item_sale_type_id, category_id);
+                                  // DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
+                                }
+                              },
+                            );
                           },
                         ),
                       ),
@@ -143,138 +151,149 @@ class Screen extends State<Home> implements ProgressDialogCodeListener {
                             height: 50,
                             child: Padding(
                                 padding: EdgeInsets.only(top: 20, bottom: 10),
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: categoryList.length,
-                                    padding: EdgeInsets.only(left: 10, right: 10),
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return Padding(
-                                          padding:
-                                          EdgeInsets.only(left: 10, right: 10),
-                                          child: GestureDetector(
-                                            onTap: () => setState(() {
-                                              mIndex = index;
-                                              category_id = categoryList[index].categoryID!;
-                                              DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
-                                            }),
-                                            child: Text(
-                                              categoryList.length > 0
-                                                  ? categoryList[index].category!
-                                                  : "Unknown",
-                                              style: TextStyle(
-                                                fontFamily: 'Trebuc',
-                                                fontWeight: FontWeight.bold,
-                                                decoration: mIndex == index
-                                                    ? TextDecoration.underline
-                                                    : null,
-                                                fontSize: 16,
-                                                color: mIndex == index
-                                                    ? Color(colors.color_primary)
-                                                    : Colors.black26,
-                                              ),
-                                            ),
-                                          ));
-                                    })),
+                                child: StreamBuilder(stream: bloc.categoryList.stream,
+                                  builder: (BuildContext context, AsyncSnapshot<List<CAT.Result>> catList) {
+                                  return ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: catList.hasData ? catList.data!.length : 0,
+                                      padding: EdgeInsets.only(left: 10, right: 10),
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return Padding(
+                                            padding:
+                                            EdgeInsets.only(left: 10, right: 10),
+                                            child: StreamBuilder(stream: bloc.mIndex.stream, builder: (BuildContext context, AsyncSnapshot<int> mIndex) {
+                                              return GestureDetector(
+                                                onTap: (){
+                                                  bloc.mIndex.sink.add(index) ;
+                                                  category_id = catList.data![index].categoryID!;
+                                                  bloc.getItemByCategory(item_sale_type_id,category_id);
+                                                  // DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
+                                                },
+                                                child: Text(
+                                                  catList.data!.length > 0
+                                                      ? catList.data![index].category!
+                                                      : "Unknown",
+                                                  style: TextStyle(
+                                                    fontFamily: 'Trebuc',
+                                                    fontWeight: FontWeight.bold,
+                                                    decoration: mIndex.data == index
+                                                        ? TextDecoration.underline
+                                                        : null,
+                                                    fontSize: 16,
+                                                    color: mIndex.data == index
+                                                        ? Color(colors.color_primary)
+                                                        : Colors.black26,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            ));
+                                      });
+                                },)),
                           )),
                       Container(
                         height: 370,
-                        child: GridView.builder(
-                            primary: false,
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            // physics:NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2, mainAxisExtent: 270),
-                            itemCount: allItemsList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Card(
-                                elevation: 8,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6)),
-                                child: Padding(
-                                  padding: EdgeInsets.all(6),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      allItemsList.length > 0
-                                          ? Image.network(
-                                        Factory().get_image_url(
-                                            allItemsList[index].imageUrl!),
-                                        fit: BoxFit.fill,
-                                        height: 150,
-                                      )
-                                          : Image.asset(
-                                          ConstantManager.no_preview,
-                                          height: 150),
-                                      RatingBar.builder(
-                                        itemSize: 18,
-                                        initialRating: allItemsList.length > 0
-                                            ? allItemsList[index]
-                                            .rating!
-                                            .toDouble()
-                                            : 0.0,
-                                        minRating: 0,
-                                        direction: Axis.horizontal,
-                                        allowHalfRating: true,
-                                        itemCount: 5,
-                                        itemPadding:
-                                        EdgeInsets.symmetric(horizontal: 0.0),
-                                        itemBuilder: (context, _) => Icon(
-                                          Icons.star,
-                                          color: Colors.black26,
-                                        ),
-                                        onRatingUpdate: (rating) {
-                                          print(rating);
-                                        },
-                                      ),
-                                      Text(
-                                        allItemsList.length > 0
-                                            ? allItemsList[index].titleName!
-                                            : "",
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: 'Trebuc',
-                                            color: Color(colors.color_primary)),
-                                      ),
-                                      Text(
-                                        allItemsList.length > 0
-                                            ? allItemsList[index].brandName!
-                                            : "",
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: 'Trebuc',
-                                            color: Colors.black26),
-                                      ),
-                                      Row(
+                        child: StreamBuilder(
+                          stream: bloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<ALL_ITEM.Result>> itemList) {
+                            return GridView.builder(
+                                primary: false,
+                                padding: EdgeInsets.only(left: 10, right: 10),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                // physics:NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2, mainAxisExtent: 270),
+                                itemCount: itemList.hasData ? itemList.data!.length : 0,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Card(
+                                    elevation: 8,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(6)),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(6),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
-                                          Text(
-                                            "${allItemsList.length > 0 ? allItemsList[index].amount! : 0.0}",
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: 'Trebuc',
-                                                color:
-                                                Color(colors.color_primary)),
+                                          itemList.data!.length > 0
+                                              ? Image.network(
+                                            Factory().get_image_url(
+                                                itemList.data![index].imageUrl!),
+                                            fit: BoxFit.fill,
+                                            height: 150,
+                                          )
+                                              : Image.asset(
+                                              ConstantManager.no_preview,
+                                              height: 150),
+                                          RatingBar.builder(
+                                            itemSize: 18,
+                                            initialRating: itemList.data!.length > 0
+                                                ? itemList.data![index]
+                                                .rating!
+                                                .toDouble()
+                                                : 0.0,
+                                            minRating: 0,
+                                            direction: Axis.horizontal,
+                                            allowHalfRating: true,
+                                            itemCount: 5,
+                                            itemPadding:
+                                            EdgeInsets.symmetric(horizontal: 0.0),
+                                            itemBuilder: (context, _) => Icon(
+                                              Icons.star,
+                                              color: Colors.black26,
+                                            ),
+                                            onRatingUpdate: (rating) {
+                                              print(rating);
+                                            },
                                           ),
-                                          Spacer(),
                                           Text(
-                                            "${allItemsList.length > 0 ? allItemsList[index].itemSaleTypeName! : "Unknown"}",
+                                            itemList.data!.length > 0
+                                                ? itemList.data![index].titleName!
+                                                : "",
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                fontFamily: 'Trebuc',
+                                                color: Color(colors.color_primary)),
+                                          ),
+                                          Text(
+                                            itemList.data!.length > 0
+                                                ? itemList.data![index].brandName!
+                                                : "",
                                             style: TextStyle(
                                                 fontSize: 12,
                                                 fontFamily: 'Trebuc',
                                                 color: Colors.black26),
                                           ),
+                                          Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Text(
+                                                "${itemList.data!.length > 0 ? itemList.data![index].amount! : 0.0}",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontFamily: 'Trebuc',
+                                                    color:
+                                                    Color(colors.color_primary)),
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                "${itemList.data!.length > 0 ? itemList.data![index].itemSaleTypeName! : "Unknown"}",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontFamily: 'Trebuc',
+                                                    color: Colors.black26),
+                                              ),
+                                            ],
+                                          )
                                         ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }),
+                                      ),
+                                    ),
+                                  );
+                                });
+                        },
+                        ),
                       )
                     ],
                   )),
