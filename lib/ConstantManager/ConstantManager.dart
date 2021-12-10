@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class ConstantManager {
@@ -26,6 +27,9 @@ class ConstantManager {
   static const String no_image_url = "https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg";
   static var maskCnicFormatter = MaskTextInputFormatter(
       mask: '#####-#######-#', filter: {"#": RegExp(r'[0-9]')});
+  static String USER_MODEL = "USER_MODEL";
+  //
+  static bool isShowing = false;
 
   //
   static const int SIGN_UP_SUCCESS = 101;
@@ -39,13 +43,12 @@ class ConstantManager {
   static int ALl_CATEGORY_SUCCESS = 109;
   static int ALl_CATEGORY_UNSUCCESS = 110;
   static int ALL_ITEM_SUCCESS = 111;
-  static int ALL_ITEM_UNSUCCESS = 111;
+  static int ALL_ITEM_UNSUCCESS = 112;
 
 
 
 
 
-  static String USER_MODEL = "USER_MODEL";
 
 
 

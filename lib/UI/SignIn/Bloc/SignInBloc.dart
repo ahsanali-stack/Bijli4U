@@ -13,9 +13,6 @@ import '../../main_screen.dart';
 
 class SignInBloc implements ProgressDialogCodeListener{
   BuildContext _context;
-  final _showing = BehaviorSubject<bool>();
-  Stream<bool> get showingStream => _showing.stream;
-  StreamSink<bool> get showingSink => _showing.sink;
   final _loginResponse = BehaviorSubject<LoginResponse>();
   Stream<LoginResponse> get loginStream => _loginResponse.stream;
   StreamSink<LoginResponse> get loginSink => _loginResponse.sink;
@@ -27,12 +24,12 @@ class SignInBloc implements ProgressDialogCodeListener{
 
   @override
   void onDismiss(String? error) {
-    showingSink.add(false);
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(_context);
   }
 
   @override
   void onHide(int code, String? message, Object data) {
-    showingSink.add(false);
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(_context);
 
     if(code == ConstantManager.SIGN_IN_SUCCESS)
     {
@@ -46,7 +43,7 @@ class SignInBloc implements ProgressDialogCodeListener{
 
   @override
   void onShow() {
-    showingSink.add(true);
+    if (!ConstantManager.isShowing) Factory().showProgressDialog(_context);
   }
 
   SignInBloc(this._context);

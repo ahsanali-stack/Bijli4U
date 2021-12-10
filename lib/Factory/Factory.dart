@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Models/Response/login_response.dart';
 
 import '../ConstantManager/ConstantManager.dart';
@@ -204,5 +205,35 @@ class Factory {
       connectTimeout: 10000,
       receiveTimeout: 10000,
     );
+  }
+
+  Future<void> showProgressDialog(BuildContext context) async {
+    ConstantManager.isShowing = true;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        final dialog = AlertDialog(
+          content: SingleChildScrollView(
+            child: Row(
+              children: [
+                CircularProgressIndicator(),
+                Padding(padding: EdgeInsets.only(left: 20),
+                  child: Text("Please wait",
+                    style: TextStyle(
+                      color: Color(colors.color_primary),
+                      fontSize: 16,
+                    ),),)
+              ],
+            ),
+          ),
+        );
+        return dialog;
+      },
+    );
+  }
+  dismissProgressDialog(BuildContext context){
+    ConstantManager.isShowing = false;
+    Navigator.of(context).pop();
   }
 }

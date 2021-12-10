@@ -14,9 +14,6 @@ import 'package:testproject/UI/main_screen.dart';
 class SignUpBloc implements ProgressDialogCodeListener{
   late BuildContext _context;
   SignUpBloc(this._context);
-  final _showing = BehaviorSubject<bool>();
-  Stream<bool> get showingStream => _showing.stream;
-  StreamSink<bool> get showingSink => _showing.sink;
   //
   final _signUpReponse = BehaviorSubject<RegistrationResponse>();
   Stream<RegistrationResponse> get baseReponseStream => _signUpReponse.stream;
@@ -31,12 +28,12 @@ class SignUpBloc implements ProgressDialogCodeListener{
 
   @override
   void onDismiss(String? error) {
-    showingSink.add(false);
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(_context);
   }
 
   @override
   void onHide(int code, String? message, Object data) {
-    showingSink.add(false);
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(_context);
 
     if (code == ConstantManager.SIGN_UP_SUCCESS) {
       Factory().finishScreenCompletely(_context, () => LauncherScreen());
@@ -48,7 +45,7 @@ class SignUpBloc implements ProgressDialogCodeListener{
 
   @override
   void onShow() {
-    showingSink.add(true);
+    if (!ConstantManager.isShowing) Factory().showProgressDialog(_context);
 
   }
 }

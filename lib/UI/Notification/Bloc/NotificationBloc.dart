@@ -15,25 +15,21 @@ import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListene
 class NotificationBloc implements ProgressDialogCodeListener{
   late BuildContext context;
 final _allNotificationsBaseResponse = BehaviorSubject<NotificationAllResponse>();
-final showing = BehaviorSubject<bool>();
 //Sink here
 Stream<NotificationAllResponse> get allNoficationStream => _allNotificationsBaseResponse.stream;
 StreamSink<NotificationAllResponse> get allNotificationSink => _allNotificationsBaseResponse.sink;
-//Stream here
-Stream<bool> get showingStream => showing.stream;
-StreamSink<bool> get showingSink => showing.sink;
 
 // get All Notification
 getAllNofication() => DataProvider().getAllNotifications(context, this);
 
   @override
   void onDismiss(String? error) {
-  showingSink.add(false);
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(context);
   }
 
   @override
   void onHide(int code, String? message, Object data) {
-    showingSink.add(false);
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(context);
 
     if(code == ConstantManager.ALL_NOTIFICATION_SUCCESS)
     {
@@ -51,7 +47,7 @@ getAllNofication() => DataProvider().getAllNotifications(context, this);
 
   @override
   void onShow() {
-  showingSink.add(true);
+    if (!ConstantManager.isShowing) Factory().showProgressDialog(context);
 }
 
   NotificationBloc(this.context);
