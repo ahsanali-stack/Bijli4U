@@ -176,107 +176,107 @@ class Screen extends State<Home> {
                           },))),
                 Expanded(
                     flex: 6,
-                    child: StreamBuilder(
-                  stream: bloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<ALL_ITEM.Result>> itemList) {
-                  return GridView.builder(
-                      primary: true,
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      // physics:NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, mainAxisExtent: 270),
-                      itemCount: itemList.hasData ? itemList.data!.length : 0,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Card(
-                          elevation: 8,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6)),
-                          child: Padding(
-                            padding: EdgeInsets.all(6),
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.stretch,
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                itemList.data!.length > 0
-                                    ? Image.network(
-                                  Factory().get_image_url(
-                                      itemList.data![index].imageUrl!),
-                                  fit: BoxFit.fill,
-                                  height: 150,
-                                )
-                                    : Image.asset(
-                                    ConstantManager.no_preview,
-                                    height: 150),
-                                RatingBar.builder(
-                                  itemSize: 18,
-                                  initialRating: itemList.data!.length > 0
-                                      ? itemList.data![index]
-                                      .rating!
-                                      .toDouble()
-                                      : 0.0,
-                                  minRating: 0,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemPadding:
-                                  EdgeInsets.symmetric(horizontal: 0.0),
-                                  itemBuilder: (context, _) => Icon(
-                                    Icons.star,
-                                    color: Colors.black26,
-                                  ),
-                                  onRatingUpdate: (rating) {
-                                    print(rating);
-                                  },
-                                ),
-                                Text(
-                                  itemList.data!.length > 0
-                                      ? itemList.data![index].titleName!
-                                      : "",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontFamily: 'Trebuc',
-                                      color: Color(colors.color_primary)),
-                                ),
-                                Text(
-                                  itemList.data!.length > 0
-                                      ? itemList.data![index].brandName!
-                                      : "",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontFamily: 'Trebuc',
-                                      color: Colors.black26),
-                                ),
-                                Row(
+                    child: Container(child: StreamBuilder(
+                      stream: bloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<ALL_ITEM.Result>> itemList) {
+                      return GridView.builder(
+                          primary: true,
+                          padding: EdgeInsets.only(left: 10, right: 10),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          // physics:NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, mainAxisExtent: 270),
+                          itemCount: itemList.hasData ? itemList.data!.length : 0,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Card(
+                              elevation: 8,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6)),
+                              child: Padding(
+                                padding: EdgeInsets.all(6),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.stretch,
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    Text(
-                                      "${itemList.data!.length > 0 ? itemList.data![index].amount! : 0.0}",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: 'Trebuc',
-                                          color:
-                                          Color(colors.color_primary)),
+                                    itemList.data!.length > 0
+                                        ? Image.network(
+                                      Factory().get_image_url(
+                                          itemList.data![index].imageUrl!),
+                                      fit: BoxFit.fill,
+                                      height: 150,
+                                    )
+                                        : Image.asset(
+                                        ConstantManager.no_preview,
+                                        height: 150),
+                                    RatingBar.builder(
+                                      itemSize: 18,
+                                      initialRating: itemList.data!.length > 0
+                                          ? itemList.data![index]
+                                          .rating!
+                                          .toDouble()
+                                          : 0.0,
+                                      minRating: 0,
+                                      direction: Axis.horizontal,
+                                      allowHalfRating: true,
+                                      itemCount: 5,
+                                      itemPadding:
+                                      EdgeInsets.symmetric(horizontal: 0.0),
+                                      itemBuilder: (context, _) => Icon(
+                                        Icons.star,
+                                        color: Colors.black26,
+                                      ),
+                                      onRatingUpdate: (rating) {
+                                        print(rating);
+                                      },
                                     ),
-                                    Spacer(),
                                     Text(
-                                      "${itemList.data!.length > 0 ? itemList.data![index].itemSaleTypeName! : "Unknown"}",
+                                      itemList.data!.length > 0
+                                          ? itemList.data![index].titleName!
+                                          : "",
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontFamily: 'Trebuc',
+                                          color: Color(colors.color_primary)),
+                                    ),
+                                    Text(
+                                      itemList.data!.length > 0
+                                          ? itemList.data![index].brandName!
+                                          : "",
                                       style: TextStyle(
                                           fontSize: 12,
                                           fontFamily: 'Trebuc',
                                           color: Colors.black26),
                                     ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Text(
+                                          "${itemList.data!.length > 0 ? itemList.data![index].amount! : 0.0}",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'Trebuc',
+                                              color:
+                                              Color(colors.color_primary)),
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          "${itemList.data!.length > 0 ? itemList.data![index].itemSaleTypeName! : "Unknown"}",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: 'Trebuc',
+                                              color: Colors.black26),
+                                        ),
+                                      ],
+                                    )
                                   ],
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                },
-                ))
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                    )))
               ],
             )),
       ],

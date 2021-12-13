@@ -113,13 +113,13 @@ class Screen extends State<HomeScreen> {
       case 1:
         return ActionBarSimple().getAppBar(context,"Favorites",false,false,56);
       case 2:
-        return ActionBarSimple().getAppBar(context,"Post",false,false,56);
+        return ActionBarSimple().getAppBar(context,"Selling Form",false,false,56);
       case 3:
         return ActionBarSimple().getAppBar(context,"Notifications",false,false,0.0);
       case 4:
         return ActionBarSimple().getAppBar(context,"Settings",false,false,0.0);
     }
-    return ActionBarSimple().getAppBar(context,"Post",false,false,56);
+    return ActionBarSimple().getAppBar(context,"Selling Form",false,false,56);
   }
 
 

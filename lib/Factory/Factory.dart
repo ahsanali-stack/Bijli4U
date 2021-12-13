@@ -8,10 +8,12 @@ import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Models/Response/login_response.dart';
+import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 
 import '../ConstantManager/ConstantManager.dart';
 
@@ -235,5 +237,67 @@ class Factory {
   dismissProgressDialog(BuildContext context){
     ConstantManager.isShowing = false;
     Navigator.of(context).pop();
+  }
+
+  showImageDialog(BuildContext context,ProgressDialogCodeListener progressDialogCodeListener){
+    showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        final dialog = AlertDialog(
+          title: Text("Select"),
+          content: Padding(
+            padding: EdgeInsets.all(0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: (){
+                    getFromCamera(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text("Camera"),
+                  ),
+                ),
+                InkWell(
+                  onTap: (){
+                    getFromGallery(context);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text("Gallery"),
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+        return dialog;
+      },
+    );
+  }
+
+  getFromGallery(BuildContext context) async {
+    final ImagePicker _picker = ImagePicker();
+    // Pick an image
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      Factory().showSnackbar(context, "message");
+      // File? imageFile = File(pickedFile.path);
+    }
+  }
+
+  getFromCamera(BuildContext context) async {
+    final ImagePicker _picker = ImagePicker();
+    // Pick an image
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      Factory().showSnackbar(context, "message");
+      // File? imageFile = File(pickedFile.path);
+    }
   }
 }

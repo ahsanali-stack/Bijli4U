@@ -43,7 +43,7 @@ dependencies:
   rxdart: ^0.27.3
   pull_to_refresh: ^2.0.0
   future_progress_dialog: ^0.2.0
-
+  image_picker: ^0.8.4+4
   observable: ^0.24.0
   flutter:
     sdk: flutter
