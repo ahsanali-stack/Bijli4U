@@ -44,6 +44,12 @@ class ConstantManager {
   static int ALl_CATEGORY_UNSUCCESS = 110;
   static int ALL_ITEM_SUCCESS = 111;
   static int ALL_ITEM_UNSUCCESS = 112;
+  static int IMAGE_SUCCESS = 113;
+  static int IMAGE_UNSUCCESS = 114;
+  static int IMAGE_LIST_SUCCESS = 115;
+  static int IMAGE_LIST_UNSUCCESS = 116;
+  static int SALE_TYPE_SUCCESS = 117;
+  static int SALE_TYPE_UNSUCCESS = 117;
 
 
 

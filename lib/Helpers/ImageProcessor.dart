@@ -1,0 +1,25 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io' as Io;
+
+import 'package:image_picker/image_picker.dart';
+import 'package:testproject/ConstantManager/ConstantManager.dart';
+import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
+
+class ImageProcessor{
+
+  late List<String> images;
+
+  decodeImageList(List<XFile> images,ProgressDialogCodeListener listener) async{
+    listener.onShow();
+    this.images = [];
+    for(int i = 0;i<images.length;i++)
+      {
+        final bytes = await Io.File(images[i].path).readAsBytes();
+        this.images.add(base64.encode(bytes));
+        log("File is = ${this.images[i]}");
+      }
+     listener.onHide(ConstantManager.IMAGE_LIST_SUCCESS, "Success", this.images);
+
+  }
+}

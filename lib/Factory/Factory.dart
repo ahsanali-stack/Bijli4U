@@ -243,7 +243,7 @@ class Factory {
     showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
-      builder: (BuildContext context) {
+      builder: (BuildContext _context) {
         final dialog = AlertDialog(
           title: Text("Select"),
           content: Padding(
@@ -254,7 +254,8 @@ class Factory {
               children: [
                 InkWell(
                   onTap: (){
-                    getFromCamera(context);
+                    Navigator.of(_context).pop();
+                    getFromCamera(context,progressDialogCodeListener);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(10),
@@ -263,7 +264,8 @@ class Factory {
                 ),
                 InkWell(
                   onTap: (){
-                    getFromGallery(context);
+                    Navigator.of(_context).pop();
+                    getFromGallery(context,progressDialogCodeListener);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(10),
@@ -279,25 +281,33 @@ class Factory {
     );
   }
 
-  getFromGallery(BuildContext context) async {
+  getFromGallery(BuildContext context,ProgressDialogCodeListener listener) async {
     final ImagePicker _picker = ImagePicker();
     // Pick an image
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      Factory().showSnackbar(context, "message");
+      listener.onHide(ConstantManager.IMAGE_SUCCESS, "SUCCESS", image);
       // File? imageFile = File(pickedFile.path);
+    }
+    else {
+      listener.onHide(ConstantManager.IMAGE_UNSUCCESS, "SUCCESS", Null);
+
     }
   }
 
-  getFromCamera(BuildContext context) async {
+  getFromCamera(BuildContext context,ProgressDialogCodeListener listener) async {
     final ImagePicker _picker = ImagePicker();
     // Pick an image
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
 
     if (image != null) {
-      Factory().showSnackbar(context, "message");
+      listener.onHide(ConstantManager.IMAGE_SUCCESS, "SUCCESS", image);
       // File? imageFile = File(pickedFile.path);
+    }
+    else {
+      listener.onHide(ConstantManager.IMAGE_UNSUCCESS, "SUCCESS", Null);
+
     }
   }
 }
