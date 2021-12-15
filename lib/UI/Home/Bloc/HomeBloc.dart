@@ -12,7 +12,7 @@ import 'package:testproject/Models/Response/advertisement_all_base_response.dart
     as AD;
 import 'package:testproject/Models/Response/all_item_base_response.dart'
     as ITEM;
-import 'package:testproject/Models/Response/category_all_base_reponse.dart'
+import 'package:testproject/Models/Response/category_base_response.dart'
     as CAT;
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 
@@ -27,7 +27,7 @@ class HomeBloc implements ProgressDialogCodeListener {
   final advertisementList = BehaviorSubject<List<AD.Result>>();
 
   //
-  final categoryAllBaseResponse = BehaviorSubject<CAT.CategoryAllBaseReponse>();
+  final categoryBaseResponse = BehaviorSubject<CAT.CategoryBaseResponse>();
   final categoryList = BehaviorSubject<List<CAT.Result>>();
 
   //
@@ -41,7 +41,7 @@ class HomeBloc implements ProgressDialogCodeListener {
   //methods here
   getAllAdvertisement() => DataProvider().getAllAdvertisement(_context, this);
 
-  getAllCategory() => DataProvider().getCategoryAll(_context, this);
+  getAllCategory() => DataProvider().getCategory(_context, this);
 
   getAllItems(int item_sale_type_id) =>
       DataProvider().getAllItems(_context, this, item_sale_type_id);
@@ -73,21 +73,16 @@ class HomeBloc implements ProgressDialogCodeListener {
       Factory().showSnackbar(_context, message!);
     } else if (code == ConstantManager.ALl_CATEGORY_SUCCESS) {
       //
-      if ((data as CAT.CategoryAllBaseReponse).result!.length > 0) {
+      if ((data as CAT.CategoryBaseResponse).result!.length > 0) {
 
-        categoryAllBaseResponse.sink.add(data as CAT.CategoryAllBaseReponse);
+        categoryBaseResponse.sink.add(data as CAT.CategoryBaseResponse);
         //
         List<CAT.Result> catList = [];
         catList.add(CAT.Result(
-            categoryID: 0,
-            category: "All",
-            createdBy: null,
-            createdDate: "",
-            active: true,
-            deleted: false,
-            lastUpdatedDate: "",
-            lastUpdatedBy: ""));
-        catList.addAll(categoryAllBaseResponse.stream.value.result!);
+          id:0,
+          name: "All"
+        ));
+        catList.addAll(categoryBaseResponse.stream.value.result!);
         //
         categoryList.sink.add(catList);
       }

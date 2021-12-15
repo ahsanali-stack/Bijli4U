@@ -9,7 +9,7 @@ import 'package:testproject/Models/Requests/login_request.dart';
 import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 
-import '../../main_screen.dart';
+import '../../Navigator/main_screen.dart';
 
 class SignInBloc implements ProgressDialogCodeListener{
   BuildContext _context;

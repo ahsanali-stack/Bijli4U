@@ -9,7 +9,7 @@ import 'package:testproject/Models/Requests/registration_request.dart';
 import 'package:testproject/Models/Response/registration_response.dart';
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 import 'package:testproject/UI/Launcher/launcher_screen.dart';
-import 'package:testproject/UI/main_screen.dart';
+import 'package:testproject/UI/Navigator/main_screen.dart';
 
 class SignUpBloc implements ProgressDialogCodeListener{
   late BuildContext _context;

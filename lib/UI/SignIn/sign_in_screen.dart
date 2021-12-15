@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:testproject/Models/Requests/login_request.dart';
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 import 'package:testproject/UI/SignIn/Bloc/SignInBloc.dart';
-import 'package:testproject/UI/main_screen.dart';
+import 'package:testproject/UI/Navigator/main_screen.dart';
 
 void main() =>
     MaterialApp(

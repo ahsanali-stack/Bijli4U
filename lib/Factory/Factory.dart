@@ -310,4 +310,9 @@ class Factory {
 
     }
   }
+
+  UserProfile getUserModel(String? value){
+    LoginResponse res = LoginResponse.fromJson(jsonDecode(value!));
+    return res.result!.userProfile!;
+  }
 }

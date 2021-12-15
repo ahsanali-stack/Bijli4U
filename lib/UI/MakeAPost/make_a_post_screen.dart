@@ -5,14 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/ConstantManager/Strings.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Helpers/ImageProcessor.dart';
+import 'package:testproject/Models/Requests/add_item_request.dart';
+import 'package:testproject/Models/Response/brand_all_base_response.dart' as BRAND;
+import 'package:testproject/Models/Response/category_all_base_reponse.dart' as CAT;
+import 'package:testproject/Models/Response/login_response.dart';
+import 'package:testproject/Models/Response/sub_category_by_category_base_model.dart' as SUB;
+import 'package:testproject/Models/Response/unit_base_respnse.dart' as UNIT;
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 import 'package:testproject/UI/MakeAPost/Bloc/MakeAPostBloc.dart';
 import 'package:testproject/Models/Response/sale_type_base_response.dart' as SALE_TYPE;
+import 'package:testproject/UI/Navigator/main_screen.dart';
 
 
 class MakePost extends StatefulWidget {
@@ -31,7 +39,16 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
   bool replace_image = false;
 
   //controller here
-  final postTypeCtrl = TextEditingController();
+  var postTypeCtrl = TextEditingController();
+  var categoryCtrl = TextEditingController();
+  var subCatCtrl = TextEditingController();
+  var brandCtrl = TextEditingController();
+  var capacityCtrl = TextEditingController();
+  var unitCtrl = TextEditingController();
+  var typeCtrl = TextEditingController();
+  var amountCtrl = TextEditingController();
+  var titleCtrl = TextEditingController();
+  var descriptionCtrl = TextEditingController();
 
 
   @override
@@ -80,7 +97,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                               stream: bloc.sale_type.stream,
                               builder: (BuildContext context, AsyncSnapshot<SALE_TYPE.Result> sale_type) {
                                 return TextFormField(
-                                controller: getController(sale_type.hasData ? sale_type.data!.itemSaleTypeName! : "Select"),
+                                controller: postTypeCtrl = getController(sale_type.hasData ? sale_type.data!.itemSaleTypeName! : ""),
                                 enabled: false,
                                 // controller: emailCtrl,
                                 keyboardType: TextInputType.text,
@@ -104,24 +121,21 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                     fillColor: Colors.white,
                                     disabledBorder: OutlineInputBorder(
                                         borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
+                                        BorderRadius.all(
+                                            Radius.circular(8)),
                                         borderSide: BorderSide(
                                             width: 1.0,
-                                            color: Color(colors.color_primary)),
+                                            color: Color(colors
+                                                .color_primary)),
                                         gapPadding: 0.0),
-                                    enabledBorder: OutlineInputBorder(
+                                    border: OutlineInputBorder(
                                         borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
+                                        BorderRadius.all(
+                                            Radius.circular(8)),
                                         borderSide: BorderSide(
                                             width: 1.0,
-                                            color: Color(colors.color_primary)),
-                                        gapPadding: 0.0),
-                                    errorBorder: OutlineInputBorder(
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
-                                        borderSide: BorderSide(
-                                            width: 1.0,
-                                            color: Color(colors.color_primary)),
+                                            color: Color(colors
+                                                .color_primary)),
                                         gapPadding: 0.0),
                                     errorStyle: TextStyle(
                                       color: Theme
@@ -155,57 +169,65 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 6),
-                          child: TextFormField(
-                            controller: postTypeCtrl,
-                            enabled: false,
-                            // controller: emailCtrl,
-                            keyboardType: TextInputType.text,
-                            textAlignVertical: TextAlignVertical.center,
-                            //validate email address
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return Strings.valueEmpty;
-                              }
-
-                              return null;
+                          child: GestureDetector(
+                            onTap: (){
+                              bloc.getCategoryAll();
                             },
-                            //end here
-                            decoration: InputDecoration(
-                              // errorText: validateEmail
-                              //     ? emailError
-                              //     : null,
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 10),
-                                filled: true,
-                                fillColor: Colors.white,
-                                disabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                errorBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                errorStyle: TextStyle(
-                                  color: Theme
-                                      .of(context)
-                                      .errorColor, // or any other color
-                                ),
-                                hintText: 'Select'),
-                            style: TextStyle(fontSize: 16),
+                            child: StreamBuilder(
+                              stream: bloc.category_item.stream,
+                              builder: (BuildContext context, AsyncSnapshot<CAT.Result> category_item) {
+                                return TextFormField(
+                                  controller: categoryCtrl = getController(category_item.hasData ? category_item.data!.category! : ""),
+                                  enabled: false,
+                                  // controller: emailCtrl,
+                                  keyboardType: TextInputType.text,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  //validate email address
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return Strings.valueEmpty;
+                                    }
+
+                                    return null;
+                                  },
+                                  //end here
+                                  decoration: InputDecoration(
+                                    // errorText: validateEmail
+                                    //     ? emailError
+                                    //     : null,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 0.0, horizontal: 10),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      disabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(8)),
+                                          borderSide: BorderSide(
+                                              width: 1.0,
+                                              color: Color(colors
+                                                  .color_primary)),
+                                          gapPadding: 0.0),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(8)),
+                                          borderSide: BorderSide(
+                                              width: 1.0,
+                                              color: Color(colors
+                                                  .color_primary)),
+                                          gapPadding: 0.0),
+                                      errorStyle: TextStyle(
+                                        color: Theme
+                                            .of(context)
+                                            .errorColor, // or any other color
+                                      ),
+                                      hintText: 'Select'),
+                                  style: TextStyle(fontSize: 16),
+                                );
+
+                              },
+                            ),
                           ),
                         ),
                         Padding(
@@ -228,57 +250,70 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 6),
-                          child: TextFormField(
-                            controller: postTypeCtrl,
-                            enabled: false,
-                            // controller: emailCtrl,
-                            keyboardType: TextInputType.text,
-                            textAlignVertical: TextAlignVertical.center,
-                            //validate email address
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return Strings.valueEmpty;
+                          child: GestureDetector(
+                            onTap: (){
+                              if(!categoryCtrl.text.isEmpty)
+                                {
+                                  bloc.getSubCatByCat(bloc.category_item.hasValue ?  bloc.category_item.value.categoryID : 0);
+                                }
+                              else{
+                                Factory().showSnackbar(context, "Please select category");
                               }
-
-                              return null;
                             },
-                            //end here
-                            decoration: InputDecoration(
-                              // errorText: validateEmail
-                              //     ? emailError
-                              //     : null,
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 10),
-                                filled: true,
-                                fillColor: Colors.white,
-                                disabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                errorBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                errorStyle: TextStyle(
-                                  color: Theme
-                                      .of(context)
-                                      .errorColor, // or any other color
-                                ),
-                                hintText: 'Select'),
-                            style: TextStyle(fontSize: 16),
+                            child: StreamBuilder(
+                              stream: bloc.sub_cat_item.stream, 
+                              builder: (BuildContext context, AsyncSnapshot<SUB.Result> sub_cat_item) {
+                                return TextFormField(
+                                  controller: subCatCtrl = getController(sub_cat_item.hasData ? sub_cat_item.data!.name! : ""),
+                                  enabled: false,
+                                  // controller: emailCtrl,
+                                  keyboardType: TextInputType.text,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  //validate email address
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return Strings.valueEmpty;
+                                    }
+
+                                    return null;
+                                  },
+                                  //end here
+                                  decoration: InputDecoration(
+                                    // errorText: validateEmail
+                                    //     ? emailError
+                                    //     : null,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 0.0, horizontal: 10),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      disabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(8)),
+                                          borderSide: BorderSide(
+                                              width: 1.0,
+                                              color: Color(colors
+                                                  .color_primary)),
+                                          gapPadding: 0.0),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(8)),
+                                          borderSide: BorderSide(
+                                              width: 1.0,
+                                              color: Color(colors
+                                                  .color_primary)),
+                                          gapPadding: 0.0),
+                                      errorStyle: TextStyle(
+                                        color: Theme
+                                            .of(context)
+                                            .errorColor, // or any other color
+                                      ),
+                                      hintText: 'Select'),
+                                  style: TextStyle(fontSize: 16),
+                                );
+                              },
+                            ),
                           ),
                         ),
                         Padding(
@@ -301,57 +336,65 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                         ),
                         Padding(
                           padding: EdgeInsets.only(top: 6),
-                          child: TextFormField(
-                            controller: postTypeCtrl,
-                            enabled: false,
-                            // controller: emailCtrl,
-                            keyboardType: TextInputType.text,
-                            textAlignVertical: TextAlignVertical.center,
-                            //validate email address
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return Strings.valueEmpty;
-                              }
-
-                              return null;
+                          child: GestureDetector(
+                            onTap: (){
+                              bloc.getBrandAll();
                             },
-                            //end here
-                            decoration: InputDecoration(
-                              // errorText: validateEmail
-                              //     ? emailError
-                              //     : null,
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 0.0, horizontal: 10),
-                                filled: true,
-                                fillColor: Colors.white,
-                                disabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                errorBorder: OutlineInputBorder(
-                                    borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                                    borderSide: BorderSide(
-                                        width: 1.0,
-                                        color: Color(colors.color_primary)),
-                                    gapPadding: 0.0),
-                                errorStyle: TextStyle(
-                                  color: Theme
-                                      .of(context)
-                                      .errorColor, // or any other color
-                                ),
-                                hintText: 'Select'),
-                            style: TextStyle(fontSize: 16),
+                            child: StreamBuilder(
+                              stream: bloc.brand_item,
+                              builder: (BuildContext context, AsyncSnapshot<BRAND.Result> brand_item) {
+                                return TextFormField(
+                                  controller: brandCtrl = getController(brand_item.hasData ? brand_item.data!.brandName! : ""),
+                                  enabled: false,
+                                  // controller: emailCtrl,
+                                  keyboardType: TextInputType.text,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  //validate email address
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return Strings.valueEmpty;
+                                    }
+
+                                    return null;
+                                  },
+                                  //end here
+                                  decoration: InputDecoration(
+                                    // errorText: validateEmail
+                                    //     ? emailError
+                                    //     : null,
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 0.0, horizontal: 10),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      disabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(8)),
+                                          borderSide: BorderSide(
+                                              width: 1.0,
+                                              color: Color(colors
+                                                  .color_primary)),
+                                          gapPadding: 0.0),
+                                      border: OutlineInputBorder(
+                                          borderRadius:
+                                          BorderRadius.all(
+                                              Radius.circular(8)),
+                                          borderSide: BorderSide(
+                                              width: 1.0,
+                                              color: Color(colors
+                                                  .color_primary)),
+                                          gapPadding: 0.0),
+                                      errorStyle: TextStyle(
+                                        color: Theme
+                                            .of(context)
+                                            .errorColor, // or any other color
+                                      ),
+                                      hintText: 'Select'),
+                                  style: TextStyle(fontSize: 16),
+                                );
+                              },
+
+                            ),
                           ),
                         ),
                       ],
@@ -399,10 +442,10 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                           Padding(
                                             padding: EdgeInsets.only(top: 6),
                                             child: TextFormField(
-                                              controller: postTypeCtrl,
-                                              enabled: false,
+                                              controller: capacityCtrl,
+                                              enabled: true,
                                               // controller: emailCtrl,
-                                              keyboardType: TextInputType.text,
+                                              keyboardType: TextInputType.number,
                                               textAlignVertical:
                                               TextAlignVertical.center,
                                               //validate email address
@@ -423,8 +466,6 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                                   EdgeInsets.symmetric(
                                                       vertical: 0.0,
                                                       horizontal: 10),
-                                                  filled: true,
-                                                  fillColor: Colors.white,
                                                   disabledBorder: OutlineInputBorder(
                                                       borderRadius:
                                                       BorderRadius.all(
@@ -434,16 +475,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                                           color: Color(colors
                                                               .color_primary)),
                                                       gapPadding: 0.0),
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8)),
-                                                      borderSide: BorderSide(
-                                                          width: 1.0,
-                                                          color: Color(colors
-                                                              .color_primary)),
-                                                      gapPadding: 0.0),
-                                                  errorBorder: OutlineInputBorder(
+                                                  border: OutlineInputBorder(
                                                       borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(8)),
@@ -489,67 +521,68 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                           ),
                                           Padding(
                                             padding: EdgeInsets.only(top: 6),
-                                            child: TextFormField(
-                                              controller: postTypeCtrl,
-                                              enabled: false,
-                                              // controller: emailCtrl,
-                                              keyboardType: TextInputType.text,
-                                              textAlignVertical:
-                                              TextAlignVertical.center,
-                                              //validate email address
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return Strings.valueEmpty;
-                                                }
-
-                                                return null;
+                                            child: GestureDetector(
+                                              onTap: (){
+                                                bloc.getUnit();
                                               },
-                                              //end here
-                                              decoration: InputDecoration(
-                                                // errorText: validateEmail
-                                                //     ? emailError
-                                                //     : null,
-                                                  contentPadding:
-                                                  EdgeInsets.symmetric(
-                                                      vertical: 0.0,
-                                                      horizontal: 10),
-                                                  filled: true,
-                                                  fillColor: Colors.white,
-                                                  disabledBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8)),
-                                                      borderSide: BorderSide(
-                                                          width: 1.0,
-                                                          color: Color(colors
-                                                              .color_primary)),
-                                                      gapPadding: 0.0),
-                                                  enabledBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8)),
-                                                      borderSide: BorderSide(
-                                                          width: 1.0,
-                                                          color: Color(colors
-                                                              .color_primary)),
-                                                      gapPadding: 0.0),
-                                                  errorBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(8)),
-                                                      borderSide: BorderSide(
-                                                          width: 1.0,
-                                                          color: Color(colors
-                                                              .color_primary)),
-                                                      gapPadding: 0.0),
-                                                  errorStyle: TextStyle(
-                                                    color: Theme
-                                                        .of(context)
-                                                        .errorColor, // or any other color
-                                                  ),
-                                                  hintText: 'Select'),
-                                              style: TextStyle(fontSize: 16),
+                                              child: StreamBuilder(
+                                                stream: bloc.unit_item.stream,
+                                                builder: (BuildContext context, AsyncSnapshot<UNIT.Result> unit_item) { 
+                                                  return TextFormField(
+                                                    controller: unitCtrl = getController(unit_item.hasData ? unit_item.data!.unitType! : ""),
+                                                    enabled: false,
+                                                    // controller: emailCtrl,
+                                                    keyboardType: TextInputType.text,
+                                                    textAlignVertical:
+                                                    TextAlignVertical.center,
+                                                    //validate email address
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return Strings.valueEmpty;
+                                                      }
+
+                                                      return null;
+                                                    },
+                                                    //end here
+                                                    decoration: InputDecoration(
+                                                      // errorText: validateEmail
+                                                      //     ? emailError
+                                                      //     : null,
+                                                        contentPadding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 0.0,
+                                                            horizontal: 10),
+                                                        filled: true,
+                                                        fillColor: Colors.white,
+                                                        disabledBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(8)),
+                                                        borderSide: BorderSide(
+                                                            width: 1.0,
+                                                            color: Color(colors
+                                                                .color_primary)),
+                                                        gapPadding: 0.0),
+                                                        border: OutlineInputBorder(
+                                                            borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(8)),
+                                                            borderSide: BorderSide(
+                                                                width: 1.0,
+                                                                color: Color(colors
+                                                                    .color_primary)),
+                                                            gapPadding: 0.0),
+                                                        errorStyle: TextStyle(
+                                                          color: Theme
+                                                              .of(context)
+                                                              .errorColor, // or any other color
+                                                        ),
+                                                        hintText: 'Select'),
+                                                    style: TextStyle(fontSize: 16),
+                                                  );
+                                                },
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -589,10 +622,10 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                         child: Padding(
                                           padding: EdgeInsets.only(left: 4),
                                           child: TextFormField(
-                                            controller: postTypeCtrl,
-                                            enabled: false,
+                                            controller: amountCtrl,
+                                            enabled: true,
                                             // controller: emailCtrl,
-                                            keyboardType: TextInputType.text,
+                                            keyboardType: TextInputType.number,
                                             textAlignVertical:
                                             TextAlignVertical.center,
                                             //validate email address
@@ -606,11 +639,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                             },
                                             //end here
                                             decoration: InputDecoration(
-                                              // errorText: validateEmail
-                                              //     ? emailError
-                                              //     : null,
-                                                contentPadding:
-                                                EdgeInsets.symmetric(
+                                                contentPadding: EdgeInsets.symmetric(
                                                     vertical: 0.0,
                                                     horizontal: 10),
                                                 filled: true,
@@ -624,16 +653,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                                         color: Color(colors
                                                             .color_primary)),
                                                     gapPadding: 0.0),
-                                                enabledBorder: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(8)),
-                                                    borderSide: BorderSide(
-                                                        width: 1.0,
-                                                        color: Color(colors
-                                                            .color_primary)),
-                                                    gapPadding: 0.0),
-                                                errorBorder: OutlineInputBorder(
+                                                border: OutlineInputBorder(
                                                     borderRadius:
                                                     BorderRadius.all(
                                                         Radius.circular(8)),
@@ -685,8 +705,8 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                           Padding(
                             padding: EdgeInsets.only(top: 6),
                             child: TextFormField(
-                              controller: postTypeCtrl,
-                              enabled: false,
+                              controller: titleCtrl,
+                              enabled: true,
                               // controller: emailCtrl,
                               keyboardType: TextInputType.text,
                               textAlignVertical: TextAlignVertical.center,
@@ -709,24 +729,21 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                   fillColor: Colors.white,
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
+                                      BorderRadius.all(
+                                          Radius.circular(8)),
                                       borderSide: BorderSide(
                                           width: 1.0,
-                                          color: Color(colors.color_primary)),
+                                          color: Color(colors
+                                              .color_primary)),
                                       gapPadding: 0.0),
-                                  enabledBorder: OutlineInputBorder(
+                                  border: OutlineInputBorder(
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
+                                      BorderRadius.all(
+                                          Radius.circular(8)),
                                       borderSide: BorderSide(
                                           width: 1.0,
-                                          color: Color(colors.color_primary)),
-                                      gapPadding: 0.0),
-                                  errorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                      borderSide: BorderSide(
-                                          width: 1.0,
-                                          color: Color(colors.color_primary)),
+                                          color: Color(colors
+                                              .color_primary)),
                                       gapPadding: 0.0),
                                   errorStyle: TextStyle(
                                     color: Theme
@@ -758,8 +775,8 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                           Padding(
                             padding: EdgeInsets.only(top: 6),
                             child: TextFormField(
-                              controller: postTypeCtrl,
-                              enabled: false,
+                              controller: descriptionCtrl,
+                              enabled: true,
                               // controller: emailCtrl,
                               keyboardType: TextInputType.text,
                               textAlignVertical: TextAlignVertical.center,
@@ -782,24 +799,21 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                   fillColor: Colors.white,
                                   disabledBorder: OutlineInputBorder(
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
+                                      BorderRadius.all(
+                                          Radius.circular(8)),
                                       borderSide: BorderSide(
                                           width: 1.0,
-                                          color: Color(colors.color_primary)),
+                                          color: Color(colors
+                                              .color_primary)),
                                       gapPadding: 0.0),
-                                  enabledBorder: OutlineInputBorder(
+                                  border: OutlineInputBorder(
                                       borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
+                                      BorderRadius.all(
+                                          Radius.circular(8)),
                                       borderSide: BorderSide(
                                           width: 1.0,
-                                          color: Color(colors.color_primary)),
-                                      gapPadding: 0.0),
-                                  errorBorder: OutlineInputBorder(
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                      borderSide: BorderSide(
-                                          width: 1.0,
-                                          color: Color(colors.color_primary)),
+                                          color: Color(colors
+                                              .color_primary)),
                                       gapPadding: 0.0),
                                   errorStyle: TextStyle(
                                     color: Theme
@@ -823,10 +837,9 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                         .images.stream.value.length + 1 : 1,
                                     itemBuilder: (BuildContext context,
                                         int index) {
-                                      return images.data!.length == index
+                                      return images.hasData && images.data!.length == index
                                           ? buildAddWidget()
-                                          :
-                                      buildImageWidget(
+                                          : buildImageWidget(
                                           bloc.images.stream.value[index],
                                           index);
                                     },
@@ -843,13 +856,12 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                   padding: EdgeInsets.only(top: 20),
                   child: ElevatedButton(
                       onPressed: () {
-                        setState(() {
-
-                          // if (_formKey.currentState!
-                          //     .validate()) {}
-                          if (bloc.images.stream.value.length > 0)
-                            ImageProcessor().decodeImageList(images, this);
-                        });
+                          if (_formKey.currentState!.validate()) {
+                            if (bloc.images.stream.value.length > 0)
+                              ImageProcessor().decodeImageList(images, this);
+                            else
+                              Factory().showSnackbar(context, "Please insert photos");
+                          }
                       },
                       style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.only(
@@ -912,9 +924,12 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
       Factory().showSnackbar(context, "Failure");
     }
     else if (ConstantManager.IMAGE_LIST_SUCCESS == code) {
+      bloc.base64_image_list.sink.add(data as List<String>);
+      // Factory().showSnackbar(context, "Success ${bloc.base64_image_list.stream.value.length}");
+      //
+      addItem();
 
 
-      Factory().showSnackbar(context, "Success ${(data as List<String>).length}");
     }
   }
 
@@ -987,6 +1002,28 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
     TextEditingController controller = TextEditingController();
     controller.text = value;
     return controller;
+  }
+
+  void addItem() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? value = prefs.getString(ConstantManager.USER_MODEL);
+    UserProfile userprofile = Factory().getUserModel(value);
+    bloc.addItem(AddItemRequest(
+      userTypeID: userprofile.userTypeID,
+      categoryID: bloc.category_item.stream.value.categoryID,
+      brandID: bloc.brand_item.stream.value.brandID,
+      subCategoryID: bloc.sub_cat_item.stream.value.id,
+      userID: userprofile.userID,
+      itemSaleTypeID: bloc.sale_type.stream.value.itemSaleTypeID,
+      amount: double.parse(amountCtrl.text),
+      capacity: capacityCtrl.text,
+      unitID: bloc.unit_item.stream.value.unitID.toString(),
+      itemDescription: descriptionCtrl.text,
+      titleName: titleCtrl.text,
+      imageUrl: bloc.base64_image_list.stream.value
+    ));
+
+
   }
 
 }

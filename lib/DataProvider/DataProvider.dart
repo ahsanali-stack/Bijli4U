@@ -7,14 +7,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:http/http.dart' as http;
+import 'package:testproject/Models/Requests/add_item_request.dart';
 import 'package:testproject/Models/Requests/login_request.dart';
 import 'package:testproject/Models/Requests/registration_request.dart';
 import 'package:testproject/Models/Response/all_item_base_response.dart';
+import 'package:testproject/Models/Response/brand_all_base_response.dart';
 import 'package:testproject/Models/Response/category_all_base_reponse.dart';
+import 'package:testproject/Models/Response/category_base_response.dart';
 import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/Models/Response/notification_all_response.dart';
 import 'package:testproject/Models/Response/registration_response.dart';
 import 'package:testproject/Models/Response/sale_type_base_response.dart';
+import 'package:testproject/Models/Response/sub_category_by_category_base_model.dart';
+import 'package:testproject/Models/Response/unit_base_respnse.dart';
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 
 import '../Models/Response/advertisement_all_base_response.dart';
@@ -42,15 +47,11 @@ class DataProvider {
     // );
     var dio = Dio(Factory().getDioOption());
     final response = await dio.request('User/SystemUserRegistration',
-      options: Options(method: 'POST'),
-      data: _request.toJson()
-    );
-
+        options: Options(method: 'POST'), data: _request.toJson());
 
     if (response.statusCode == 200) {
       // then parse the JSON.
-      RegistrationResponse res =
-          RegistrationResponse.fromJson(response.data);
+      RegistrationResponse res = RegistrationResponse.fromJson(response.data);
       if (res.response!.responseCode == 0)
         _progressDialogCodeListener.onHide(
             ConstantManager.SIGN_UP_SUCCESS, "Success", Null);
@@ -87,9 +88,7 @@ class DataProvider {
     var dio = Dio(Factory().getDioOption());
     // await Future.wait([dio.post('/info'), dio.get('/token')]);
     final response = await dio.request('User/SystemUserLogin',
-      options: Options(method: 'POST'),
-      data: request.toJson()
-    );
+        options: Options(method: 'POST'), data: request.toJson());
 
     if (response.statusCode == 200) {
       // then parse the JSON.
@@ -132,7 +131,8 @@ class DataProvider {
 
     var dio = Dio(Factory().getDioOption());
     // await Future.wait([dio.post('/info'), dio.get('/token')]);
-    final response = await dio.request('MemberShipAccount/SystemGetNotificationtAll',
+    final response = await dio.request(
+      'MemberShipAccount/SystemGetNotificationtAll',
       options: Options(method: 'GET'),
     );
 
@@ -178,31 +178,215 @@ class DataProvider {
     //
     var dio = Dio(Factory().getDioOption());
     // await Future.wait([dio.post('/info'), dio.get('/token')]);
-    final response = await dio.request('MemberShipAccount/SystemGetAdvertisementAll',
-        options: Options(method: 'GET'),
+    final response = await dio.request(
+      'MemberShipAccount/SystemGetAdvertisementAll',
+      options: Options(method: 'GET'),
     );
-    print("Data Here:"+response.data.toString());
-
-
+    print("Data Here:" + response.data.toString());
 
     if (response.statusCode == 200) {
       // then parse the JSON.
       AdvertisementAllBaseResponse res =
-            AdvertisementAllBaseResponse.fromJson(response.data);
+          AdvertisementAllBaseResponse.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
             ConstantManager.ALL_AD_SUCCESS, "Success", res);
       } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.ALL_AD_UNSUCCESS,
+            res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  Future<void> getCategory(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request(
+      'Item/SystemCategory',
+      options: Options(method: 'GET'),
+    );
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      CategoryBaseResponse res = CategoryBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
-            ConstantManager.ALL_AD_UNSUCCESS,
+            ConstantManager.ALl_CATEGORY_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALl_CATEGORY_UNSUCCESS,
             res.response!.responseMessage,
             Null);
     } else {
       // then throw an exception.
       progressDialogCodeListener.onDismiss("error");
       RegistrationResponse res =
-      // RegistrationResponse.fromJson(jsonDecode(response.body));
-      throw Exception('Failed to create.' + response.statusMessage!);
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  void getAllItems(
+      BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener,
+      int item_sale_type_id) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('Item/SystemGetAllItem',
+        options: Options(method: 'POST'),
+        data: {"Item_Sale_Type_ID": item_sale_type_id});
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      AllItemBaseResponse res = AllItemBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALL_ITEM_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.ALL_ITEM_UNSUCCESS,
+            res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  void getAllItemsByCategory(
+      BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener,
+      int item_sale_type_id,
+      int category_id) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('Item/SystemGetAllItemByCategory',
+        options: Options(method: 'POST'),
+        data: {
+          "Item_Sale_Type_ID": item_sale_type_id,
+          "Category_ID": category_id
+        });
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      AllItemBaseResponse res = AllItemBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALL_ITEM_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.ALL_ITEM_UNSUCCESS,
+            res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  Future<void> getSaleType(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    // final response = await http.get(
+    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
+    //   headers: <String, String>{
+    //     'Content-Type': 'application/json; charset=UTF-8',
+    //   },
+    // );
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    final response = await dio.request(
+      'Item/SystemGetItemsSaleType',
+      options: Options(method: 'GET'),
+    );
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      SaleTypeBaseResponse res = SaleTypeBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.SALE_TYPE_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.SALE_TYPE_UNSUCCESS,
+            res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 
@@ -227,18 +411,16 @@ class DataProvider {
     //
     var dio = Dio(Factory().getDioOption());
     // await Future.wait([dio.post('/info'), dio.get('/token')]);
-    final response = await dio.request('Item/SystemCategoryAll',
+    final response = await dio.request(
+      'Item/SystemCategoryAll',
       options: Options(method: 'GET'),
     );
-    print("Data Here:"+response.data.toString());
-
-
-
+    print("Data Here:" + response.data.toString());
 
     if (response.statusCode == 200) {
       // then parse the JSON.
       CategoryAllBaseReponse res =
-      CategoryAllBaseReponse.fromJson(response.data);
+          CategoryAllBaseReponse.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
             ConstantManager.ALl_CATEGORY_SUCCESS, "Success", res);
@@ -251,13 +433,13 @@ class DataProvider {
       // then throw an exception.
       progressDialogCodeListener.onDismiss("error");
       RegistrationResponse res =
-      // RegistrationResponse.fromJson(jsonDecode(response.body));
-      throw Exception('Failed to create.' + response.statusMessage!);
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 
-  void getAllItems(BuildContext context,
-      ProgressDialogCodeListener progressDialogCodeListener,int item_sale_type_id) async {
+  Future<void> getSubCatByCat(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener, int cat_id) async {
     //check connectivity
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
@@ -267,103 +449,40 @@ class DataProvider {
 
     if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
 
-    // final response = await http.get(
-    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
-    //   headers: <String, String>{
-    //     'Content-Type': 'application/json; charset=UTF-8',
-    //   },
-    // );
-
     //
     var dio = Dio(Factory().getDioOption());
-    // await Future.wait([dio.post('/info'), dio.get('/token')]);
-    final response = await dio.request('Item/SystemGetAllItem',
+
+    final response = await dio.request(
+      'Item/SystemSubCategorybyCategory',
       options: Options(method: 'POST'),
-      data: {
-        "Item_Sale_Type_ID":item_sale_type_id
-      }
+      data: {"Category_ID": "1"},
     );
-    print("Data Here:"+response.data.toString());
 
 
+    print("Data Here:" + response.data.toString());
 
     if (response.statusCode == 200) {
       // then parse the JSON.
-      AllItemBaseResponse res =
-      AllItemBaseResponse.fromJson(response.data);
+      SubCategoryByCategoryBaseModel res =
+      SubCategoryByCategoryBaseModel.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
-            ConstantManager.ALL_ITEM_SUCCESS, "Success", res);
+            ConstantManager.SUB_CAT_SUCCESS, "Success", res);
       } else if (res.response!.responseCode == 1)
         progressDialogCodeListener.onHide(
-            ConstantManager.ALL_ITEM_UNSUCCESS,
+            ConstantManager.SUB_CAT_UNSUCCESS,
             res.response!.responseMessage,
             Null);
     } else {
       // then throw an exception.
       progressDialogCodeListener.onDismiss("error");
       RegistrationResponse res =
-      // RegistrationResponse.fromJson(jsonDecode(response.body));
-      throw Exception('Failed to create.' + response.statusMessage!);
+          // RegistrationResponse.fromJson(jsonDecode(response.body));
+          throw Exception('Failed to create.' + response.statusMessage!);
     }
   }
 
-
-  void getAllItemsByCategory(BuildContext context,
-      ProgressDialogCodeListener progressDialogCodeListener,int item_sale_type_id,int category_id) async {
-    //check connectivity
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if (connectivityResult == ConnectivityResult.none) {
-      Factory().showSnackbar(context, "No Connectivity");
-      return;
-    }
-
-    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
-
-    // final response = await http.get(
-    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
-    //   headers: <String, String>{
-    //     'Content-Type': 'application/json; charset=UTF-8',
-    //   },
-    // );
-
-    //
-    var dio = Dio(Factory().getDioOption());
-    // await Future.wait([dio.post('/info'), dio.get('/token')]);
-    final response = await dio.request('Item/SystemGetAllItemByCategory',
-        options: Options(method: 'POST'),
-        data: {
-          "Item_Sale_Type_ID":item_sale_type_id,
-          "Category_ID":category_id
-        }
-    );
-    print("Data Here:"+response.data.toString());
-
-
-
-    if (response.statusCode == 200) {
-      // then parse the JSON.
-      AllItemBaseResponse res =
-      AllItemBaseResponse.fromJson(response.data);
-      if (res.response!.responseCode == 0) {
-        progressDialogCodeListener.onHide(
-            ConstantManager.ALL_ITEM_SUCCESS, "Success", res);
-      } else if (res.response!.responseCode == 1)
-        progressDialogCodeListener.onHide(
-            ConstantManager.ALL_ITEM_UNSUCCESS,
-            res.response!.responseMessage,
-            Null);
-    } else {
-      // then throw an exception.
-      progressDialogCodeListener.onDismiss("error");
-      RegistrationResponse res =
-      // RegistrationResponse.fromJson(jsonDecode(response.body));
-      throw Exception('Failed to create.' + response.statusMessage!);
-    }
-  }
-
-
-  Future<void> getSaleType(BuildContext context,
+  Future<void> getBrandAll(BuildContext context,
       ProgressDialogCodeListener progressDialogCodeListener) async {
     //check connectivity
     var connectivityResult = await (Connectivity().checkConnectivity());
@@ -374,33 +493,25 @@ class DataProvider {
 
     if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
 
-    // final response = await http.get(
-    //   Uri.parse(ConstantManager.base_url + "MemberShipAccount/SystemGetAdvertisementAll"),
-    //   headers: <String, String>{
-    //     'Content-Type': 'application/json; charset=UTF-8',
-    //   },
-    // );
-
     //
     var dio = Dio(Factory().getDioOption());
-    final response = await dio.request('Item/SystemGetItemsSaleType',
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request(
+      'Item/SystemBrandAll',
       options: Options(method: 'GET'),
     );
-    print("Data Here:"+response.data.toString());
-
-
-
+    print("Data Here:" + response.data.toString());
 
     if (response.statusCode == 200) {
       // then parse the JSON.
-      SaleTypeBaseResponse res =
-      SaleTypeBaseResponse.fromJson(response.data);
+      BrandAllBaseResponse res =
+      BrandAllBaseResponse.fromJson(response.data);
       if (res.response!.responseCode == 0) {
         progressDialogCodeListener.onHide(
-            ConstantManager.SALE_TYPE_SUCCESS, "Success", res);
+            ConstantManager.BRAND_ALL_SUCCESS, "Success", res);
       } else if (res.response!.responseCode == 1)
         progressDialogCodeListener.onHide(
-            ConstantManager.SALE_TYPE_UNSUCCESS,
+            ConstantManager.BRAND_ALL_UNSUCCESS,
             res.response!.responseMessage,
             Null);
     } else {
@@ -412,4 +523,86 @@ class DataProvider {
     }
   }
 
+  Future<void> getUnit(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request(
+      'Item/SystemGetUnit',
+      options: Options(method: 'GET'),
+    );
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      UnitBaseRespnse res =
+      UnitBaseRespnse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.UNIT_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(
+            ConstantManager.UNIT_UNSUCCESS,
+            res.response!.responseMessage,
+            Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  Future<void> addItem(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener,AddItemRequest request) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request(
+      'Item/SystemAddItem',
+      options: Options(method: 'POST'),
+      data: request.toJson()
+    );
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      UnitBaseRespnse res =
+      UnitBaseRespnse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.ADD_ITEM_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(
+            ConstantManager.ADD_ITEM_UNSUCCESS,
+            res.response!.responseMessage,
+            Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
 }

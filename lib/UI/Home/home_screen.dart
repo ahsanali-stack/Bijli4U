@@ -10,7 +10,7 @@ import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/advertisement_all_base_response.dart'
     as AD;
 import 'package:testproject/Models/Response/all_item_base_response.dart' as ALL_ITEM;
-import 'package:testproject/Models/Response/category_all_base_reponse.dart'
+import 'package:testproject/Models/Response/category_base_response.dart'
     as CAT;
 import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -149,13 +149,13 @@ class Screen extends State<Home> {
                                         return GestureDetector(
                                           onTap: (){
                                             bloc.mIndex.sink.add(index) ;
-                                            category_id = catList.data![index].categoryID!;
+                                            category_id = catList.data![index].id!;
                                             bloc.getItemByCategory(item_sale_type_id,category_id);
                                             // DataProvider().getAllItemsByCategory(context, this, item_sale_type_id, category_id);
                                           },
                                           child: Text(
                                             catList.data!.length > 0
-                                                ? catList.data![index].category!
+                                                ? catList.data![index].name!
                                                 : "Unknown",
                                             style: TextStyle(
                                               fontFamily: 'Trebuc',

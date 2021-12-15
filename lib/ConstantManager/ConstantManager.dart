@@ -49,7 +49,15 @@ class ConstantManager {
   static int IMAGE_LIST_SUCCESS = 115;
   static int IMAGE_LIST_UNSUCCESS = 116;
   static int SALE_TYPE_SUCCESS = 117;
-  static int SALE_TYPE_UNSUCCESS = 117;
+  static int SALE_TYPE_UNSUCCESS = 118;
+  static int SUB_CAT_SUCCESS = 119;
+  static int SUB_CAT_UNSUCCESS = 120;
+  static int BRAND_ALL_SUCCESS = 121;
+  static int BRAND_ALL_UNSUCCESS = 122;
+  static int UNIT_SUCCESS = 123;
+  static int UNIT_UNSUCCESS = 123;
+  static int ADD_ITEM_SUCCESS = 124;
+  static int ADD_ITEM_UNSUCCESS = 124;
 
 
 
