@@ -1,4 +1,5 @@
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Factory/Factory.dart';
@@ -25,29 +26,35 @@ class HomeScreen extends StatefulWidget {
   }
 }
 
-class MainScreen extends State<HomeScreen> {
+class MainScreen extends State<HomeScreen> with SingleTickerProviderStateMixin{
   final pages = [Home(),Favorites(),MakePost(),NotificationScreen(),Settings()];
-  static final MainScreenBloc bloc = MainScreenBloc();
+  late MainScreenBloc bloc;
   int current_index = 0;
+
 
 
   @override
   void initState() {
-    bloc.pages.sink.add(pages);
-    bloc.buildScreen();
+    bloc = MainScreenBloc();
     bloc.onItemTap(0);
+
+
+
+    // Factory().showSnackbar(context, "Yes");
   } // IndexedStack(
   // index: current_index,
   // children: pages,
   // )
   @override
   Widget build(BuildContext context) {
-
     return StreamBuilder(stream: bloc.current_index.stream,
       builder: (BuildContext context, AsyncSnapshot<int> current_index) {
       return Scaffold(
           backgroundColor: Colors.white,
-          body: _buildScreen(current_index.hasData ? current_index.data : 0),
+          body: IndexedStack(
+            index: current_index.hasData ? current_index.data : 0,
+            children: pages,
+          ),
           appBar: current_index.hasData ? buildAppBar(current_index.data!) : buildAppBar(0),
           bottomNavigationBar: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
@@ -56,7 +63,7 @@ class MainScreen extends State<HomeScreen> {
             showUnselectedLabels: true,
             selectedItemColor: Color(colors.color_primary),
             unselectedItemColor: Colors.grey,
-            onTap: bloc.onItemTap,
+            onTap: onItemTap,
             currentIndex: current_index.hasData ? current_index.data! : 0,
             items: [
               BottomNavigationBarItem(
@@ -89,25 +96,25 @@ class MainScreen extends State<HomeScreen> {
       },);
   }
 
-  Widget _buildScreen(current_index) {
-    switch(current_index)
-    {
-      case 0:
-        return bloc.home.value;
-      case 1:
-        return bloc.favorite.value;
-      case 2:
-        return bloc.make_a_post.value;
-      case 3:
-        return bloc.notification.value;
-      case 4:
-        return bloc.setting.value;
-    }
-    return Container(
-      child: Text("Error"),
-      alignment: Alignment.center,
-    );
-  }
+  // Widget _buildScreen(current_index) {
+  //   switch(current_index)
+  //   {
+  //     case 0:
+  //       return bloc.home.stream.value;
+  //     case 1:
+  //       return bloc.favorite.stream.value;
+  //     case 2:
+  //       return bloc.make_a_post.stream.value;
+  //     case 3:
+  //       return bloc.notification.stream.value;
+  //     case 4:
+  //       return bloc.setting.stream.value;
+  //   }
+  //   return Container(
+  //     child: Text("Error"),
+  //     alignment: Alignment.center,
+  //   );
+  // }
 
   PreferredSizeWidget buildAppBar(int current_index) {
     switch(current_index)
@@ -127,5 +134,7 @@ class MainScreen extends State<HomeScreen> {
   }
 
 
-
+  void onItemTap(int value) {
+    bloc.current_index.sink.add(value);
+  }
 }

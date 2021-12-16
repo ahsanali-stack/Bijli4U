@@ -27,8 +27,8 @@ class Factory {
   }
 
   finishScreenCompletely(BuildContext context,Widget Function() screen){
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (BuildContext context) => screen()));
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+        builder: (BuildContext context) => screen()), (route) => false);
   }
 
   is_validated_fields (BuildContext context,List<String> list)

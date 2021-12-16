@@ -17,7 +17,7 @@ class ImageProcessor{
       {
         final bytes = await Io.File(images[i].path).readAsBytes();
         this.images.add(base64.encode(bytes));
-        log("File is = ${this.images[i]}");
+        print("File is = ${this.images[i]}");
       }
      listener.onHide(ConstantManager.IMAGE_LIST_SUCCESS, "Success", this.images);
 

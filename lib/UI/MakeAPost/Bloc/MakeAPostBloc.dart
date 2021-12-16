@@ -174,11 +174,8 @@ class MakeAPostBloc implements ProgressDialogCodeListener {
     else if(code == ConstantManager.ADD_ITEM_SUCCESS)
     {
       Factory().showSnackbar(context, "Done");
-      
-      MainScreen.bloc.pages.stream.value.removeAt(2);
-      MainScreen.bloc.pages.stream.value.insert(2, MakePost());
-      // MainScreen.bloc.pages.sink.add(list);
-      MainScreen.bloc.current_index.sink.add(0);
+
+      Factory().finishScreenCompletely(context, () => HomeScreen());
 
       
     }else if(code == ConstantManager.ADD_ITEM_UNSUCCESS)
