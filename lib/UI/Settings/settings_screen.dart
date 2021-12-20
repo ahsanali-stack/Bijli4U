@@ -1,5 +1,4 @@
-import 'dart:convert';
-import 'dart:ffi';
+
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +7,8 @@ import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/login_response.dart';
+import 'package:testproject/UI/Products/tab_screen.dart' as Tab;
+import 'package:testproject/UI/Review/review_screen.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -18,34 +19,27 @@ class Settings extends StatefulWidget {
 }
 
 class Screen extends State<Settings> {
-
-  late LoginResponse _loginResponse;
   String? name = "Unknown";
   String? image = "${ConstantManager.image_base_url}";
+  bool isLogin = true;
 
   @override
   void initState() {
-
     getLoginResponse();
-
-
 
     // Factory().showSnackbar(context, "${_loginResponse.result!.userProfile!.userName}");
   }
 
-
-
   Future<void> getLoginResponse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? value = prefs.getString(ConstantManager.USER_MODEL);
-      _loginResponse = LoginResponse.fromJson(jsonDecode(value!));
+    UserProfile userprofile = Factory().getUserModel(prefs);
 
-    setState(() {
-      name = _loginResponse.result!.userProfile!.userName;
-      image = "${ConstantManager.image_base_url}${_loginResponse.result!.userProfile!.image}";
-    });
+    if (userprofile != null)
+      setState(() {
+        name = userprofile.userName;
+        image = "${ConstantManager.image_base_url}${userprofile.image}";
+      });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +59,8 @@ class Screen extends State<Settings> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: NetworkImage(
-                            image!),//${_loginResponse.result!.userProfile!.image}
+                        backgroundImage: NetworkImage(image!),
+                        //${_loginResponse.result!.userProfile!.image}
                         backgroundColor: Colors.transparent,
                       ),
                       Padding(
@@ -79,43 +73,15 @@ class Screen extends State<Settings> {
                   ),
                 )),
             Padding(
-              padding:
-                  EdgeInsets.only(top: 20, left: 20, right: 20),
+              padding: EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Column(
                 children: [
-                  Padding(
-                      padding: EdgeInsets.only(top: 0,bottom: 0),
-                      child: GestureDetector(
-                        onTap: ()=>{
-                          Factory().showSnackbar(context, "${_loginResponse.result!.userProfile!.userName}")
-                        },
-                        child: Card(
-                          color: Colors.white,
-                          elevation: 8.0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: [
-                                Text(
-                                  "Product",
-                                  style: TextStyle(
-                                      color: Color(colors.color_primary),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                Spacer(),
-                                Icon(Icons.arrow_right)
-                              ],
-                            ),
-                          ),
-                        )),
-                      ),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10,bottom: 0),
+                  isLogin ? InkWell(
+                    onTap: (){
+                      Factory().changeScreen(context, () => Tab.Tab());
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 0, bottom: 0),
                       child: Card(
                         color: Colors.white,
                         elevation: 8.0,
@@ -128,7 +94,7 @@ class Screen extends State<Settings> {
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Text(
-                                "Product Review",
+                                "Product",
                                 style: TextStyle(
                                     color: Color(colors.color_primary),
                                     fontSize: 16,
@@ -139,9 +105,42 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10,bottom: 0),
+                      ),
+                    ),
+                  ) : Container(),
+                  isLogin ? InkWell(
+                    onTap: (){
+                      Factory().changeScreen(context, () => ReviewScreen());
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 10, bottom: 0),
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 8.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  "Product Review",
+                                  style: TextStyle(
+                                      color: Color(colors.color_primary),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Spacer(),
+                                Icon(Icons.arrow_right)
+                              ],
+                            ),
+                          ),
+                        )),
+                  ): Container(),
+                  isLogin ? Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 0),
                       child: Card(
                         color: Colors.white,
                         elevation: 8.0,
@@ -165,9 +164,9 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10,bottom: 0),
+                      )) : Container(),
+                  isLogin ? Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 0),
                       child: Card(
                         color: Colors.white,
                         elevation: 8.0,
@@ -191,9 +190,9 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10,bottom: 0),
+                      )) : Container(),
+                  isLogin ? Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 0),
                       child: Card(
                         color: Colors.white,
                         elevation: 8.0,
@@ -217,9 +216,9 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10,bottom: 0),
+                      )) : Container(),
+                  isLogin ? Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 0),
                       child: Card(
                         color: Colors.white,
                         elevation: 8.0,
@@ -243,9 +242,9 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )),
-                  Padding(
-                      padding: EdgeInsets.only(top: 10,bottom: 0),
+                      )) : Container(),
+                  isLogin ? Padding(
+                      padding: EdgeInsets.only(top: 10, bottom: 0),
                       child: Card(
                         color: Colors.white,
                         elevation: 8.0,
@@ -269,9 +268,65 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )),
-
-
+                      )) : Container(),
+                  isLogin ? Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: ElevatedButton(
+                        onPressed: () {
+                        },
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.only(
+                                left: 40, right: 40),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius
+                                    .all(
+                                    Radius.circular(8)),
+                                side: BorderSide(
+                                    width: 1,
+                                    color: Color(colors
+                                        .color_button_stroke))),
+                            fixedSize: Size(double.nan, 45),
+                            primary: Color(
+                                colors.color_primary)),
+                        child: Text(
+                          "Sign Out",
+                          style: TextStyle(
+                            fontFamily: 'Trebuc',
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        )),
+                  ) : Container(),
+                  !isLogin ? Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: ElevatedButton(
+                        onPressed: () {
+                        },
+                        style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.only(
+                                left: 40, right: 40),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius
+                                    .all(
+                                    Radius.circular(8)),
+                                side: BorderSide(
+                                    width: 1,
+                                    color: Color(colors
+                                        .color_button_stroke))),
+                            fixedSize: Size(double.nan, 45),
+                            primary: Color(
+                                colors.color_primary)),
+                        child: Text(
+                          "Sign In",
+                          style: TextStyle(
+                            fontFamily: 'Trebuc',
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        )),
+                  ) : Container(),
                 ],
               ),
             )
@@ -280,6 +335,4 @@ class Screen extends State<Settings> {
       ),
     );
   }
-
-
 }

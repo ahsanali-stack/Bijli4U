@@ -9,6 +9,7 @@ import 'package:testproject/Factory/Factory.dart';
 import 'package:http/http.dart' as http;
 import 'package:testproject/Models/Requests/add_item_request.dart';
 import 'package:testproject/Models/Requests/login_request.dart';
+import 'package:testproject/Models/Requests/product_rating_request.dart';
 import 'package:testproject/Models/Requests/registration_request.dart';
 import 'package:testproject/Models/Response/all_item_base_response.dart';
 import 'package:testproject/Models/Response/brand_all_base_response.dart';
@@ -17,6 +18,7 @@ import 'package:testproject/Models/Response/category_base_response.dart';
 import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/Models/Response/notification_all_response.dart';
 import 'package:testproject/Models/Response/registration_response.dart';
+import 'package:testproject/Models/Response/review_base_response.dart';
 import 'package:testproject/Models/Response/sale_type_base_response.dart';
 import 'package:testproject/Models/Response/sub_category_by_category_base_model.dart';
 import 'package:testproject/Models/Response/unit_base_respnse.dart';
@@ -597,6 +599,128 @@ class DataProvider {
             ConstantManager.ADD_ITEM_UNSUCCESS,
             res.response!.responseMessage,
             Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  void getItemsByUser(
+      BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener,
+      int item_sale_type_id,int user_id) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+  //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('Item/SystemGetAllItem',
+        options: Options(method: 'POST'),
+        data: {
+          "Item_Sale_Type_ID":item_sale_type_id,
+          "User_ID":user_id
+        });
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      AllItemBaseResponse res = AllItemBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALL_ITEM_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.ALL_ITEM_UNSUCCESS,
+            res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  void getRatingListByUser(
+      BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener,
+      int user_id) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('Item/SystemGetAllItemsRatingByUser',
+        options: Options(method: 'POST'),
+        data: {
+          "User_ID":user_id
+        });
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      ReviewBaseResponse res = ReviewBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.ALL_ITEM_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.ALL_ITEM_UNSUCCESS,
+            res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  void addProductRating(
+      BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener,
+      ProductRatingRequest request) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request('Item/SystemAddProductRating',
+        options: Options(method: 'POST'),
+        data: request.toJson());
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      ReviewBaseResponse res = ReviewBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.RATING_SUCCESS, "Success", Null);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(ConstantManager.RATING_UNSUCCESS,
+            res.response!.responseMessage, Null);
     } else {
       // then throw an exception.
       progressDialogCodeListener.onDismiss("error");

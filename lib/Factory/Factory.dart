@@ -311,8 +311,9 @@ class Factory {
     }
   }
 
-  UserProfile getUserModel(String? value){
+  getUserModel(SharedPreferences prefs){
+    String? value = prefs.getString(ConstantManager.USER_MODEL);
     LoginResponse res = LoginResponse.fromJson(jsonDecode(value!));
-    return res.result!.userProfile!;
+    return res != null ? res.result!.userProfile! : null;
   }
 }

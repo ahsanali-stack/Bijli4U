@@ -843,7 +843,6 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                           bloc.images.stream.value[index],
                                           index);
                                     },
-
                                   );
                                 },
                               ),
@@ -1006,8 +1005,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
 
   void addItem() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? value = prefs.getString(ConstantManager.USER_MODEL);
-    UserProfile userprofile = Factory().getUserModel(value);
+    UserProfile userprofile = Factory().getUserModel(prefs);
     bloc.addItem(AddItemRequest(
       userTypeID: userprofile.userTypeID,
       categoryID: bloc.category_item.stream.value.categoryID,

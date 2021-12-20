@@ -1,9 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/UI/Launcher/launcher_screen.dart';
+import 'package:testproject/UI/Navigator/main_screen.dart';
+
+import 'Models/Response/login_response.dart';
 
 void main() => runApp(
     MaterialApp(
@@ -20,6 +24,9 @@ class SplashScreen2 extends StatefulWidget {
 
 class SplashScreenWidget extends State<SplashScreen2>
     with TickerProviderStateMixin {
+  
+  
+
   @override
   Widget build(BuildContext context) {
 
@@ -40,7 +47,7 @@ class SplashScreenWidget extends State<SplashScreen2>
 
     });
 
-    Factory().changeScreenWithDelay(context, () => LauncherScreen(),6);
+    changeScreen();
 
 
 
@@ -72,5 +79,23 @@ class SplashScreenWidget extends State<SplashScreen2>
                 ));
       }
     );
+  }
+
+  void changeScreen() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    UserProfile userprofile = Factory().getUserModel(prefs);
+
+    if(userprofile != null)
+      {
+        Factory().finishScreenCompletely(context, () => HomeScreen());
+      }
+    else {
+      Factory().changeScreenWithDelay(context, () => LauncherScreen(),6);
+    }
+  }
+
+  @override
+  void dispose() {
+
   }
 }

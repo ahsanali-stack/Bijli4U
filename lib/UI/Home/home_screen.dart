@@ -196,7 +196,7 @@ class Screen extends State<Home> {
                             // physics:NeverScrollableScrollPhysics(),
                             gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2, mainAxisExtent: 270),
+                                crossAxisCount: 2 , childAspectRatio: 2/3.1),
                             itemCount: itemList.hasData ? itemList.data!.length : 0,
                             itemBuilder: (BuildContext context, int index) {
                               return Card(
@@ -206,8 +206,7 @@ class Screen extends State<Home> {
                                 child: Padding(
                                   padding: EdgeInsets.all(6),
                                   child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment.stretch,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.max,
                                     children: [
                                       itemList.data!.length > 0
