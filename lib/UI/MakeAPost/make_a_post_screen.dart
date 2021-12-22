@@ -837,11 +837,11 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                         .images.stream.value.length + 1 : 1,
                                     itemBuilder: (BuildContext context,
                                         int index) {
-                                      return images.hasData && images.data!.length == index
-                                          ? buildAddWidget()
-                                          : buildImageWidget(
+                                      return images.hasData && images.data!.length != index
+                                          ? buildImageWidget(
                                           bloc.images.stream.value[index],
-                                          index);
+                                          index)
+                                          : buildAddWidget();
                                     },
                                   );
                                 },

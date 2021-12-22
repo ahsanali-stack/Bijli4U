@@ -16,11 +16,6 @@ import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListene
 import 'package:testproject/UI/SignIn/Bloc/SignInBloc.dart';
 import 'package:testproject/UI/Navigator/main_screen.dart';
 
-void main() =>
-    MaterialApp(
-        title: "Sign In Screen",
-        debugShowCheckedModeBanner: false,
-        home: SignInScreen());
 
 class SignInScreen extends StatefulWidget {
 

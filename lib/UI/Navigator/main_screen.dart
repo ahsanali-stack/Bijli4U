@@ -14,10 +14,6 @@ import 'package:testproject/main.dart';
 
 import '../Components/action_bar_home_screen.dart';
 
-void main() => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: "Test Application",
-    home: HomeScreen());
 
 class HomeScreen extends StatefulWidget {
   @override

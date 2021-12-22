@@ -15,11 +15,6 @@ import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListene
 import 'package:testproject/UI/Launcher/launcher_screen.dart';
 import 'package:testproject/UI/SignUp/Bloc/SignUpBloc.dart';
 
-void main() =>
-    MaterialApp(
-        title: "Sign Up Screen",
-        debugShowCheckedModeBanner: false,
-        home: SignUpScreen());
 
 class SignUpScreen extends StatefulWidget {
   @override

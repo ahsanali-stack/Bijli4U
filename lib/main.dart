@@ -24,14 +24,13 @@ class SplashScreen2 extends StatefulWidget {
 
 class SplashScreenWidget extends State<SplashScreen2>
     with TickerProviderStateMixin {
-  
-  
+    late AnimationController controller;
+
+
 
   @override
   Widget build(BuildContext context) {
 
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-    AnimationController controller;
     late Animation<Offset> offset ;
 
     setState(() {
@@ -94,8 +93,9 @@ class SplashScreenWidget extends State<SplashScreen2>
     }
   }
 
-  @override
+    @override
   void dispose() {
-
+    controller.dispose();
+    super.dispose();
   }
 }

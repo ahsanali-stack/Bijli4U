@@ -202,7 +202,7 @@ class Screen extends State<Home> {
                             itemBuilder: (BuildContext context, int index) {
                               return InkWell(
                                 onTap: (){
-                                  Factory().changeScreen(context, () => ProductDetailsScreen());
+                                  Factory().changeScreen(context, () => ProductDetailsScreen(itemList.hasData ? itemList.data![index] : ALL_ITEM.Result()));
                                 },
                                 child: Card(
                                   elevation: 8,
@@ -217,7 +217,7 @@ class Screen extends State<Home> {
                                         itemList.data!.length > 0
                                             ? Image.network(
                                           Factory().get_image_url(
-                                              itemList.data![index].imageUrl!),
+                                              itemList.data![index].imageUrl!.split(',').first),
                                           fit: BoxFit.fill,
                                           height: 150,
                                           errorBuilder: (context, error, stackTrace) {
