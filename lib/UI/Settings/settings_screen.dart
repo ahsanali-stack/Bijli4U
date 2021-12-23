@@ -7,6 +7,7 @@ import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/login_response.dart';
+import 'package:testproject/UI/LoadCalculator/load_calculator.dart';
 import 'package:testproject/UI/Products/tab_screen.dart' as Tab;
 import 'package:testproject/UI/Review/review_screen.dart';
 
@@ -243,32 +244,37 @@ class Screen extends State<Settings> {
                           ),
                         ),
                       )) : Container(),
-                  isLogin ? Padding(
-                      padding: EdgeInsets.only(top: 10, bottom: 0),
-                      child: Card(
-                        color: Colors.white,
-                        elevation: 8.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                "Load Calculator",
-                                style: TextStyle(
-                                    color: Color(colors.color_primary),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Spacer(),
-                              Icon(Icons.arrow_right)
-                            ],
+                  isLogin ? InkWell (
+                    onTap: (){
+                      Factory().changeScreen(context, () => LoadCalculatorScreen());
+                    },
+                    child: Padding(
+                        padding: EdgeInsets.only(top: 10, bottom: 0),
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 8.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
                           ),
-                        ),
-                      )) : Container(),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  "Load Calculator",
+                                  style: TextStyle(
+                                      color: Color(colors.color_primary),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Spacer(),
+                                Icon(Icons.arrow_right)
+                              ],
+                            ),
+                          ),
+                        )),
+                  ): Container(),
                   isLogin ? Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
