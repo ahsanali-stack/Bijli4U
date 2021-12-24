@@ -198,7 +198,7 @@ class Screen extends State<Home> {
                             gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2 , childAspectRatio: 2/3.1),
-                            itemCount: itemList.hasData ? itemList.data!.length : 0,
+                            itemCount: itemList.hasData && !itemList.hasError ? itemList.data!.length : 0,
                             itemBuilder: (BuildContext context, int index) {
                               return InkWell(
                                 onTap: (){

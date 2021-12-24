@@ -89,9 +89,12 @@ class HomeBloc implements ProgressDialogCodeListener {
     } else if (code == ConstantManager.ALl_CATEGORY_UNSUCCESS) {
       Factory().showSnackbar(_context, message!);
     } else if (code == ConstantManager.ALL_ITEM_SUCCESS) {
-      if ((data as ITEM.AllItemBaseResponse).result!.length > 0) {
+      if ((data as ITEM.AllItemBaseResponse).result != null && (data as ITEM.AllItemBaseResponse).result!.length > 0) {
         allItemBaseResponse.sink.add(data as ITEM.AllItemBaseResponse);
         itemsList.sink.add(allItemBaseResponse.value.result!);
+      }
+      else{
+        itemsList.sink.addError("error");
       }
     } else if (code == ConstantManager.ALL_ITEM_UNSUCCESS) {
       Factory().showSnackbar(_context, message!);
