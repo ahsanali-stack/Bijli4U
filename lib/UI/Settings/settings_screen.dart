@@ -7,7 +7,7 @@ import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/login_response.dart';
-import 'package:testproject/UI/LoadCalculator/load_calculator.dart';
+import 'package:testproject/UI/LoadCalculator/load_calculator_screen.dart';
 import 'package:testproject/UI/Products/tab_screen.dart' as Tab;
 import 'package:testproject/UI/Review/review_screen.dart';
 

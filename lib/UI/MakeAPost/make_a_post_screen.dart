@@ -97,7 +97,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                               stream: bloc.sale_type.stream,
                               builder: (BuildContext context, AsyncSnapshot<SALE_TYPE.Result> sale_type) {
                                 return TextFormField(
-                                controller: postTypeCtrl = getController(sale_type.hasData ? sale_type.data!.itemSaleTypeName! : ""),
+                                controller: postTypeCtrl = Factory().getController(sale_type.hasData ? sale_type.data!.itemSaleTypeName! : ""),
                                 enabled: false,
                                 // controller: emailCtrl,
                                 keyboardType: TextInputType.text,
@@ -177,7 +177,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                               stream: bloc.category_item.stream,
                               builder: (BuildContext context, AsyncSnapshot<CAT.Result> category_item) {
                                 return TextFormField(
-                                  controller: categoryCtrl = getController(category_item.hasData ? category_item.data!.category! : ""),
+                                  controller: categoryCtrl = Factory().getController(category_item.hasData ? category_item.data!.category! : ""),
                                   enabled: false,
                                   // controller: emailCtrl,
                                   keyboardType: TextInputType.text,
@@ -264,7 +264,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                               stream: bloc.sub_cat_item.stream, 
                               builder: (BuildContext context, AsyncSnapshot<SUB.Result> sub_cat_item) {
                                 return TextFormField(
-                                  controller: subCatCtrl = getController(sub_cat_item.hasData ? sub_cat_item.data!.name! : ""),
+                                  controller: subCatCtrl = Factory().getController(sub_cat_item.hasData ? sub_cat_item.data!.name! : ""),
                                   enabled: false,
                                   // controller: emailCtrl,
                                   keyboardType: TextInputType.text,
@@ -344,7 +344,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                               stream: bloc.brand_item,
                               builder: (BuildContext context, AsyncSnapshot<BRAND.Result> brand_item) {
                                 return TextFormField(
-                                  controller: brandCtrl = getController(brand_item.hasData ? brand_item.data!.brandName! : ""),
+                                  controller: brandCtrl = Factory().getController(brand_item.hasData ? brand_item.data!.brandName! : ""),
                                   enabled: false,
                                   // controller: emailCtrl,
                                   keyboardType: TextInputType.text,
@@ -529,7 +529,7 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
                                                 stream: bloc.unit_item.stream,
                                                 builder: (BuildContext context, AsyncSnapshot<UNIT.Result> unit_item) { 
                                                   return TextFormField(
-                                                    controller: unitCtrl = getController(unit_item.hasData ? unit_item.data!.unitType! : ""),
+                                                    controller: unitCtrl = Factory().getController(unit_item.hasData ? unit_item.data!.unitType! : ""),
                                                     enabled: false,
                                                     // controller: emailCtrl,
                                                     keyboardType: TextInputType.text,
@@ -997,11 +997,6 @@ class Screen extends State<MakePost> implements ProgressDialogCodeListener {
     );
   }
 
-  getController(String value) {
-    TextEditingController controller = TextEditingController();
-    controller.text = value;
-    return controller;
-  }
 
   void addItem() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

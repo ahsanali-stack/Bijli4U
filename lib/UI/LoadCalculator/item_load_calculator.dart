@@ -1,8 +1,10 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/Strings.dart';
+import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/UI/LoadCalculator/LoadCalculatorBloc.dart';
 
 class ItemWidget extends StatefulWidget{
@@ -11,6 +13,11 @@ class ItemWidget extends StatefulWidget{
 
   final int i;
   final LoadCalculatorBloc bloc;
+  final quantity = BehaviorSubject<int>();
+  final powerCtrl = TextEditingController();
+  final appliance = BehaviorSubject<String>();
+  final unit = BehaviorSubject<String>();
+
 
   @override
   State<StatefulWidget> createState() {
@@ -27,8 +34,12 @@ class Item extends State<ItemWidget>{
   final LoadCalculatorBloc bloc;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    widget.quantity.sink.add(1);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
       elevation: 8,
@@ -42,7 +53,8 @@ class Item extends State<ItemWidget>{
                 alignment: Alignment.topRight,
                 child: InkWell(
                   onTap: (){
-                    bloc.removeItemAt(index);
+                    if(bloc.item_list.stream.hasValue && bloc.item_list.stream.value.length >= 2)
+                      bloc.removeItemAt(index);
                   },
                   child: Icon(Icons.cancel,color: Color(colors.color_primary),),
                 )
@@ -66,54 +78,60 @@ class Item extends State<ItemWidget>{
               padding: EdgeInsets.only(top: 6),
               child: GestureDetector(
                 onTap: (){
+                  bloc.getAppliancesAt(index);
                 },
-                child: TextFormField(
-                  enabled: false,
-                  // controller: emailCtrl,
-                  keyboardType: TextInputType.text,
-                  textAlignVertical: TextAlignVertical.center,
-                  //validate email address
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return Strings.valueEmpty;
-                    }
-                    return null;
-                  },
-                  // end here
-                  decoration: InputDecoration(
+                child: StreamBuilder(
+                  stream: widget.appliance.stream, 
+                  builder: (BuildContext context, AsyncSnapshot<String> appliance) { 
+                    return TextFormField(
+                      enabled: false,
+                      controller: Factory().getController(appliance.hasData ? appliance.data! : ""),
+                      keyboardType: TextInputType.text,
+                      textAlignVertical: TextAlignVertical.center,
+                      //validate email address
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return Strings.valueEmpty;
+                        }
+                        return null;
+                      },
+                      // end here
+                      decoration: InputDecoration(
 
-                    // errorText: validateEmail
-                    //     ? emailError
-                    //     : null,
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 0.0, horizontal: 10),
-                      filled: true,
-                      fillColor: Colors.white,
-                      disabledBorder: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(
-                              Radius.circular(8)),
-                          borderSide: BorderSide(
-                              width: 1.0,
-                              color: Color(colors
-                                  .color_primary)),
-                          gapPadding: 0.0),
-                      border: OutlineInputBorder(
-                          borderRadius:
-                          BorderRadius.all(
-                              Radius.circular(8)),
-                          borderSide: BorderSide(
-                              width: 1.0,
-                              color: Color(colors
-                                  .color_primary)),
-                          gapPadding: 0.0),
-                      errorStyle: TextStyle(
-                        color: Theme
-                            .of(context)
-                            .errorColor, // or any other color
-                      ),
-                      hintText: 'Select'),
-                  style: TextStyle(fontSize: 16),
+                        // errorText: validateEmail
+                        //     ? emailError
+                        //     : null,
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 0.0, horizontal: 10),
+                          filled: true,
+                          fillColor: Colors.white,
+                          disabledBorder: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(
+                                  Radius.circular(8)),
+                              borderSide: BorderSide(
+                                  width: 1.0,
+                                  color: Color(colors
+                                      .color_primary)),
+                              gapPadding: 0.0),
+                          border: OutlineInputBorder(
+                              borderRadius:
+                              BorderRadius.all(
+                                  Radius.circular(8)),
+                              borderSide: BorderSide(
+                                  width: 1.0,
+                                  color: Color(colors
+                                      .color_primary)),
+                              gapPadding: 0.0),
+                          errorStyle: TextStyle(
+                            color: Theme
+                                .of(context)
+                                .errorColor, // or any other color
+                          ),
+                          hintText: 'Select'),
+                      style: TextStyle(fontSize: 16),
+                    );
+                  },
                 ),
               ),
             ),
@@ -148,7 +166,7 @@ class Item extends State<ItemWidget>{
                               padding: EdgeInsets.only(top: 6),
                               child: TextFormField(
                                 enabled: true,
-                                // controller: emailCtrl,
+                                controller: widget.powerCtrl,
                                 keyboardType: TextInputType.number,
                                 textAlignVertical:
                                 TextAlignVertical.center,
@@ -227,58 +245,64 @@ class Item extends State<ItemWidget>{
                               padding: EdgeInsets.only(top: 6),
                               child: GestureDetector(
                                 onTap: (){
+                                  bloc.getUnitAt(index);
                                 },
-                                child: TextFormField(
-                                  enabled: false,
-                                  // controller: emailCtrl,
-                                  keyboardType: TextInputType.text,
-                                  textAlignVertical:
-                                  TextAlignVertical.center,
-                                  //validate email address
-                                  validator: (value) {
-                                    if (value == null ||
-                                        value.isEmpty) {
-                                      return Strings.valueEmpty;
-                                    }
+                                child: StreamBuilder(
+                                  stream: widget.unit.stream,
+                                  builder: (BuildContext context, AsyncSnapshot<String> unit) {
+                                    return TextFormField(
+                                      enabled: false,
+                                      controller: Factory().getController(unit.hasData ? unit.data! : ""),
+                                      keyboardType: TextInputType.text,
+                                      textAlignVertical:
+                                      TextAlignVertical.center,
+                                      //validate email address
+                                      validator: (value) {
+                                        if (value == null ||
+                                            value.isEmpty) {
+                                          return Strings.valueEmpty;
+                                        }
 
-                                    return null;
+                                        return null;
+                                      },
+                                      //end here
+                                      decoration: InputDecoration(
+                                        // errorText: validateEmail
+                                        //     ? emailError
+                                        //     : null,
+                                          contentPadding:
+                                          EdgeInsets.symmetric(
+                                              vertical: 0.0,
+                                              horizontal: 10),
+                                          filled: true,
+                                          fillColor: Colors.white,
+                                          disabledBorder: OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.all(
+                                                  Radius.circular(8)),
+                                              borderSide: BorderSide(
+                                                  width: 1.0,
+                                                  color: Color(colors
+                                                      .color_primary)),
+                                              gapPadding: 0.0),
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                              BorderRadius.all(
+                                                  Radius.circular(8)),
+                                              borderSide: BorderSide(
+                                                  width: 1.0,
+                                                  color: Color(colors
+                                                      .color_primary)),
+                                              gapPadding: 0.0),
+                                          errorStyle: TextStyle(
+                                            color: Theme
+                                                .of(context)
+                                                .errorColor, // or any other color
+                                          ),
+                                          hintText: 'Select'),
+                                      style: TextStyle(fontSize: 16),
+                                    );
                                   },
-                                  //end here
-                                  decoration: InputDecoration(
-                                    // errorText: validateEmail
-                                    //     ? emailError
-                                    //     : null,
-                                      contentPadding:
-                                      EdgeInsets.symmetric(
-                                          vertical: 0.0,
-                                          horizontal: 10),
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      disabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.all(
-                                              Radius.circular(8)),
-                                          borderSide: BorderSide(
-                                              width: 1.0,
-                                              color: Color(colors
-                                                  .color_primary)),
-                                          gapPadding: 0.0),
-                                      border: OutlineInputBorder(
-                                          borderRadius:
-                                          BorderRadius.all(
-                                              Radius.circular(8)),
-                                          borderSide: BorderSide(
-                                              width: 1.0,
-                                              color: Color(colors
-                                                  .color_primary)),
-                                          gapPadding: 0.0),
-                                      errorStyle: TextStyle(
-                                        color: Theme
-                                            .of(context)
-                                            .errorColor, // or any other color
-                                      ),
-                                      hintText: 'Select'),
-                                  style: TextStyle(fontSize: 16),
                                 ),
                               ),
                             ),
@@ -295,11 +319,11 @@ class Item extends State<ItemWidget>{
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.chevron_left,color: Color(colors.color_primary),size: 40,),
+                    InkWell(onTap:(){ if(widget.quantity.stream.value != 1) widget.quantity.sink.add(widget.quantity.stream.value-1);},child: Icon(Icons.chevron_left,color: Color(colors.color_primary),size: 40,),),
                     Container(color: Colors.black,width: 40,height: 1,),
-                    Padding(padding: EdgeInsets.only(left: 6,right: 5),child:Text("1",style: TextStyle(color: Color(colors.color_primary),fontFamily: 'Trebuc',fontSize: 20))),
+                    Padding(padding: EdgeInsets.only(left: 6,right: 5),child:StreamBuilder(stream: widget.quantity.stream, builder: (BuildContext context, AsyncSnapshot<int> quantity) { return Text("${quantity.hasData ? quantity.data! : 0}",style: TextStyle(color: Color(colors.color_primary),fontFamily: 'Trebuc',fontSize: 20)); },)),
                     Container(color: Colors.black,width: 40,height: 1,),
-                    Icon(Icons.chevron_right,color: Color(colors.color_primary),size: 40,)
+                    InkWell(onTap: (){ widget.quantity.sink.add(widget.quantity.stream.value+1);},child: Icon(Icons.chevron_right,color: Color(colors.color_primary),size: 40,),)
                   ],
                 ),
               ),
@@ -309,5 +333,6 @@ class Item extends State<ItemWidget>{
       ),
     );
   }
+
 
 }

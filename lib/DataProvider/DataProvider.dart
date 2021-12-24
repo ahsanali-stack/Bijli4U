@@ -12,6 +12,7 @@ import 'package:testproject/Models/Requests/login_request.dart';
 import 'package:testproject/Models/Requests/product_rating_request.dart';
 import 'package:testproject/Models/Requests/registration_request.dart';
 import 'package:testproject/Models/Response/all_item_base_response.dart';
+import 'package:testproject/Models/Response/appliances_base_response.dart';
 import 'package:testproject/Models/Response/brand_all_base_response.dart';
 import 'package:testproject/Models/Response/category_all_base_reponse.dart';
 import 'package:testproject/Models/Response/category_base_response.dart';
@@ -721,6 +722,47 @@ class DataProvider {
       } else if (res.response!.responseCode == 1)
         progressDialogCodeListener.onHide(ConstantManager.RATING_UNSUCCESS,
             res.response!.responseMessage, Null);
+    } else {
+      // then throw an exception.
+      progressDialogCodeListener.onDismiss("error");
+      RegistrationResponse res =
+      // RegistrationResponse.fromJson(jsonDecode(response.body));
+      throw Exception('Failed to create.' + response.statusMessage!);
+    }
+  }
+
+  Future<void> getAppliances(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener) async {
+    //check connectivity
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      Factory().showSnackbar(context, "No Connectivity");
+      return;
+    }
+
+    if (progressDialogCodeListener != null) progressDialogCodeListener.onShow();
+
+    //
+    var dio = Dio(Factory().getDioOption());
+    // await Future.wait([dio.post('/info'), dio.get('/token')]);
+    final response = await dio.request(
+      'Item/SystemGetAppliances',
+      options: Options(method: 'GET'),
+    );
+    print("Data Here:" + response.data.toString());
+
+    if (response.statusCode == 200) {
+      // then parse the JSON.
+      AppliancesBaseResponse res =
+      AppliancesBaseResponse.fromJson(response.data);
+      if (res.response!.responseCode == 0) {
+        progressDialogCodeListener.onHide(
+            ConstantManager.APPLIANCES_SUCCESS, "Success", res);
+      } else if (res.response!.responseCode == 1)
+        progressDialogCodeListener.onHide(
+            ConstantManager.APPLIANCES_UNSUCCESS,
+            res.response!.responseMessage,
+            Null);
     } else {
       // then throw an exception.
       progressDialogCodeListener.onDismiss("error");

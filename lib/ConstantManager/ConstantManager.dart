@@ -60,6 +60,8 @@ class ConstantManager {
   static int ADD_ITEM_UNSUCCESS = 124;
   static int RATING_SUCCESS = 125;
   static int RATING_UNSUCCESS = 125;
+  static int APPLIANCES_SUCCESS = 126;
+  static int APPLIANCES_UNSUCCESS = 127;
 
 
 

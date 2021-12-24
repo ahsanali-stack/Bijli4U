@@ -196,40 +196,43 @@ class MakeAPostBloc implements ProgressDialogCodeListener {
       builder: (BuildContext _context) {
         final dialog = AlertDialog(
           title: Text("Select"),
-          content: ListView.builder(
-            shrinkWrap: true,
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                onTap: () {
-                  Navigator.of(_context).pop();
-                  if (code == ConstantManager.SALE_TYPE_SUCCESS)
+          content: Container(
+            width: double.maxFinite,
+            child:  ListView.builder(
+              shrinkWrap: true,
+              itemCount: list.length,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                  onTap: () {
+                    Navigator.of(_context).pop();
+                    if (code == ConstantManager.SALE_TYPE_SUCCESS)
                     {
                       sale_type.sink.add(sale_type_list.value[index]);
                       print("Select ${sale_type.stream.value.itemSaleTypeName}");
                     }
-                  else if(code == ConstantManager.ALl_CATEGORY_SUCCESS) {
-                    category_item.sink.add(category_list.stream.value[index]);
-                  }
-                  else if(code == ConstantManager.SUB_CAT_SUCCESS)
+                    else if(code == ConstantManager.ALl_CATEGORY_SUCCESS) {
+                      category_item.sink.add(category_list.stream.value[index]);
+                    }
+                    else if(code == ConstantManager.SUB_CAT_SUCCESS)
                     {
                       sub_cat_item.sink.add(sub_cat_list.stream.value[index]);
                     }
-                  else if(code == ConstantManager.BRAND_ALL_SUCCESS)
-                  {
-                    brand_item.sink.add(brand_all_list.stream.value[index]);
-                  }
-                  else if(code == ConstantManager.UNIT_SUCCESS)
-                  {
-                    unit_item.sink.add(unit_list.stream.value[index]);
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text("${list[index]}"),
-                ),
-              );
-            },
+                    else if(code == ConstantManager.BRAND_ALL_SUCCESS)
+                    {
+                      brand_item.sink.add(brand_all_list.stream.value[index]);
+                    }
+                    else if(code == ConstantManager.UNIT_SUCCESS)
+                    {
+                      unit_item.sink.add(unit_list.stream.value[index]);
+                    }
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text("${list[index]}"),
+                  ),
+                );
+              },
+            ),
           ),
         );
         return dialog;

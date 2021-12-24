@@ -316,4 +316,10 @@ class Factory {
     LoginResponse res = LoginResponse.fromJson(jsonDecode(value!));
     return res != null ? res.result!.userProfile! : null;
   }
+
+  getController(String value) {
+    TextEditingController controller = TextEditingController();
+    controller.text = value;
+    return controller;
+  }
 }
