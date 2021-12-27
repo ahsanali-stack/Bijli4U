@@ -30,7 +30,14 @@ class ConstantManager {
   static String USER_MODEL = "USER_MODEL";
   //
   static bool isShowing = false;
-
+  //lists here
+  static const applications_list = ["Leisure","Domestic","Construction/Site","Stand Generator","Prime Power"];
+  static const frequncy_list = ["Daily","Weekly","Monthly","Continuously"];
+  static const hours_list = ["Upto to 2 hours on each run","2-5 hours on each run","5+ hours on each run"];
+  static const fuel_type_list = ["Petrol","Diesel","LPG","Natural Gas"];
+  static const starting_method_list = ["Recoil Start","Local Ket Start","Remote Start","Automatic"];
+  static const sound_level_list = ["Standard Open Frame","Canopied/Silenced","Super Silenced"];
+  static const voltage_list = ["110V 50Hz Single Phase","230V 50Hz Single Phase","110V/230V 50Hz Single Phase","400V 50Hz Three Phase","230V/400V 50Hz Multi Phase"];
   //
   static const int SIGN_UP_SUCCESS = 101;
   static const int SIGN_UP_UNSUCCESS = 102;

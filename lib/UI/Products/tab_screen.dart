@@ -29,10 +29,10 @@ class TabScreen extends State<Tab>{
 
   @override
   void initState() {
+    setData();
+    //
     rent = Rent();
     buy = Buy();
-    //
-    setData();
   }
 
   @override

@@ -86,7 +86,7 @@ class SplashScreenWidget extends State<SplashScreen2>
 
     if(userprofile != null)
       {
-        Factory().finishScreenCompletely(context, () => HomeScreen());
+        Factory().changeScreenWithDelay(context, () => HomeScreen(),6);
       }
     else {
       Factory().changeScreenWithDelay(context, () => LauncherScreen(),6);

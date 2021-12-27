@@ -7,6 +7,7 @@ import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/login_response.dart';
+import 'package:testproject/UI/InquiryForm/InquiryFormScreen.dart';
 import 'package:testproject/UI/LoadCalculator/load_calculator_screen.dart';
 import 'package:testproject/UI/Products/tab_screen.dart' as Tab;
 import 'package:testproject/UI/Review/review_screen.dart';
@@ -168,7 +169,9 @@ class Screen extends State<Settings> {
                       )) : Container(),
                   isLogin ? Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 0),
-                      child: Card(
+                      child: GestureDetector(onTap: (){
+                        Factory().changeScreen(context, () => InquiryScreen());
+                      },child: Card(
                         color: Colors.white,
                         elevation: 8.0,
                         shape: RoundedRectangleBorder(
@@ -191,7 +194,7 @@ class Screen extends State<Settings> {
                             ],
                           ),
                         ),
-                      )) : Container(),
+                      ),)) : Container(),
                   isLogin ? Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 0),
                       child: Card(
