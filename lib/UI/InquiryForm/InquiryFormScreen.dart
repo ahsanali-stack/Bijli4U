@@ -7,6 +7,8 @@ import 'package:testproject/ConstantManager/Strings.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/UI/Components/action_bar_simple.dart';
 import 'package:testproject/UI/InquiryForm/Bloc/InquiryFormBloc.dart';
+import 'package:testproject/Models/Requests/add_enquiry.dart';
+
 
 class InquiryScreen extends StatefulWidget{
   @override
@@ -68,7 +70,7 @@ class Inquiry extends State<InquiryScreen>
                   child: TextFormField(
                     enabled: true,
                     controller: nameCtrl,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.name,
                     textAlignVertical:
                     TextAlignVertical.center,
                     //validate email address
@@ -208,7 +210,7 @@ class Inquiry extends State<InquiryScreen>
                   child: TextFormField(
                     enabled: true,
                     controller: emailCtrl,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.emailAddress,
                     textAlignVertical:
                     TextAlignVertical.center,
                     //validate email address
@@ -912,7 +914,7 @@ class Inquiry extends State<InquiryScreen>
                     minLines: 3,
                     enabled: true,
                     controller: appliancesCtrl,
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.text,
                     textAlignVertical:
                     TextAlignVertical.center,
                     //validate email address
@@ -965,6 +967,22 @@ class Inquiry extends State<InquiryScreen>
                   child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
+                          bloc.addEnquiry(
+                            AddEnquiry(
+                              contactName: nameCtrl.text.toString(),
+                              phoneNumber: phoneNoCtrl.text.toString(),
+                              email: emailCtrl.text.toString(),
+                              application: appliancesCtrl.text.toString(),
+                              frequencyUse: frequencyCtrl.text.toString(),
+                              operatingHours: operatingHrsCtrl.text.toString(),
+                              fuelType: fuelTypeCtrl.text.toString(),
+                              startingMethod: startingMethodCtrl.text.toString(),
+                              soundLevel: soundLevelCtrl.text.toString(),
+                              voltageRequired: voltageCtrl.text.toString(),
+                              listAllAppliancesBeingPowered: appliancesCtrl.text.toString(),
+                              otherDetailsSpecicalRequirementAdditions: ""
+                            )
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(

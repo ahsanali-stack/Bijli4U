@@ -105,4 +105,6 @@ class HomeBloc implements ProgressDialogCodeListener {
   void onShow() {
     if (!ConstantManager.isShowing) Factory().showProgressDialog(_context);
   }
+
+
 }

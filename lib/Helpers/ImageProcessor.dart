@@ -22,4 +22,16 @@ class ImageProcessor{
      listener.onHide(ConstantManager.IMAGE_LIST_SUCCESS, "Success", this.images);
 
   }
+
+  decodeImage(XFile image,ProgressDialogCodeListener listener) async{
+    listener.onShow();
+    String mImage = "";
+
+      final bytes = await Io.File(image.path).readAsBytes();
+      mImage = base64.encode(bytes);
+      print("File is = ${mImage}");
+
+    listener.onHide(ConstantManager.IMAGE_LIST_SUCCESS, "Success", mImage);
+
+  }
 }

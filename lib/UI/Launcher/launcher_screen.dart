@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Factory/Factory.dart';
+import 'package:testproject/UI/Navigator/main_screen.dart';
 import 'package:testproject/UI/SignIn/sign_in_screen.dart';
 import 'package:testproject/UI/SignUp/sign_up_screen.dart';
 
@@ -45,7 +46,9 @@ class LauncherScreen extends StatelessWidget {
                 children: [
                   Padding(padding: const EdgeInsets.only(bottom: 10),
                   child: ElevatedButton(
-                      onPressed: press,
+                      onPressed: (){
+                        Factory().finishScreenCompletely(context, () => HomeScreen(0));
+                      },
                       style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(Radius.circular(8))

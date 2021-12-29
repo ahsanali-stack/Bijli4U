@@ -33,7 +33,7 @@ class SignInBloc implements ProgressDialogCodeListener{
 
     if(code == ConstantManager.SIGN_IN_SUCCESS)
     {
-      Factory().finishScreenCompletely(_context, () => HomeScreen());
+      Factory().finishScreenCompletely(_context, () => HomeScreen(0));
     }
     else if(code == ConstantManager.SIGN_IN_UNSUCCESS)
     {

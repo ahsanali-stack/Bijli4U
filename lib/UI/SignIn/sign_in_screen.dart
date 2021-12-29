@@ -38,6 +38,8 @@ class Screen extends State<SignInScreen> {
     // TODO: implement initState
     super.initState();
     bloc = SignInBloc(context);
+    emailCtrl.text = "Faizan1507c@gmail.com";
+    passwordCtrl.text = "Faizi1212";
   }
 
   @override

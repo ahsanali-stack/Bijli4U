@@ -163,6 +163,8 @@ class UserProfile {
     _companyProfile = companyProfile;
 }
 
+
+
   UserProfile.fromJson(dynamic json) {
     _userID = json['User_ID'];
     _userName = json['User_Name'];
@@ -245,6 +247,16 @@ class UserProfile {
   dynamic get registrationDate => _registrationDate;
   dynamic get companyProfile => _companyProfile;
 
+
+  set image(String? value) {
+    _image = value;
+  }
+
+
+  set firstName(String? value) {
+    _firstName = value;
+  }
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['User_ID'] = _userID;
@@ -276,6 +288,13 @@ class UserProfile {
     return map;
   }
 
+  set lastName(String? value) {
+    _lastName = value;
+  }
+
+  set mobileNumber(String? value) {
+    _mobileNumber = value;
+  }
 }
 
 /// dashboard : null

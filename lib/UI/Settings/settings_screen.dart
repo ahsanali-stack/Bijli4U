@@ -8,9 +8,12 @@ import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/UI/InquiryForm/InquiryFormScreen.dart';
+import 'package:testproject/UI/Launcher/launcher_screen.dart';
 import 'package:testproject/UI/LoadCalculator/load_calculator_screen.dart';
 import 'package:testproject/UI/Products/tab_screen.dart' as Tab;
+import 'package:testproject/UI/Profile/profile_screen.dart';
 import 'package:testproject/UI/Review/review_screen.dart';
+import 'package:testproject/UI/SignIn/sign_in_screen.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -22,7 +25,7 @@ class Settings extends StatefulWidget {
 
 class Screen extends State<Settings> {
   String? name = "Unknown";
-  String? image = "${ConstantManager.image_base_url}";
+  String? image = "";
   bool isLogin = true;
 
   @override
@@ -36,11 +39,20 @@ class Screen extends State<Settings> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     UserProfile userprofile = Factory().getUserModel(prefs);
 
-    if (userprofile != null)
-      setState(() {
+    setState(() {
+      if (userprofile != null)
+      {
         name = userprofile.userName;
         image = "${ConstantManager.image_base_url}${userprofile.image}";
-      });
+
+      }
+      else
+      {
+        isLogin = false;
+
+      }
+    });
+
   }
 
   @override
@@ -59,11 +71,17 @@ class Screen extends State<Settings> {
                   padding: EdgeInsets.only(top: 20, bottom: 20),
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundImage: NetworkImage(image!),
-                        //${_loginResponse.result!.userProfile!.image}
-                        backgroundColor: Colors.transparent,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(50.0),
+                        child: Image.network(
+                          image!,
+                          height: 100.0,
+                          width: 100.0,
+                          fit: BoxFit.fill,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(ConstantManager.no_preview,width: 100,height: 100,fit: BoxFit.fill,);
+                          },
+                        ),
                       ),
                       Padding(
                           padding: EdgeInsets.only(top: 20),
@@ -223,27 +241,32 @@ class Screen extends State<Settings> {
                       )) : Container(),
                   isLogin ? Padding(
                       padding: EdgeInsets.only(top: 10, bottom: 0),
-                      child: Card(
-                        color: Colors.white,
-                        elevation: 8.0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Text(
-                                "Profile",
-                                style: TextStyle(
-                                    color: Color(colors.color_primary),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              Spacer(),
-                              Icon(Icons.arrow_right)
-                            ],
+                      child: GestureDetector(
+                        onTap: (){
+                          Factory().changeScreen(context, () => ProfileScreen());
+                        },
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 8.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  "Profile",
+                                  style: TextStyle(
+                                      color: Color(colors.color_primary),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Spacer(),
+                                Icon(Icons.arrow_right)
+                              ],
+                            ),
                           ),
                         ),
                       )) : Container(),
@@ -282,6 +305,7 @@ class Screen extends State<Settings> {
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
                         onPressed: () {
+                          signOut();
                         },
                         style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.only(
@@ -311,6 +335,7 @@ class Screen extends State<Settings> {
                     padding: EdgeInsets.only(top: 20),
                     child: ElevatedButton(
                         onPressed: () {
+                          Factory().changeScreen(context, () => SignInScreen());
                         },
                         style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.only(
@@ -343,5 +368,11 @@ class Screen extends State<Settings> {
         ),
       ),
     );
+  }
+
+  void signOut() async{
+    Factory().finishScreenCompletely(context, () => LauncherScreen());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(ConstantManager.USER_MODEL);
   }
 }

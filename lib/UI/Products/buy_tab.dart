@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
-import 'package:testproject/Models/Response/all_item_base_response.dart';
+import 'package:testproject/Models/Response/all_item_base_response.dart' as ITEMS;
+import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/UI/ProductDetails/product_details_screen.dart';
 import 'package:testproject/UI/Products/Bloc/BuyBloc.dart';
 import 'package:testproject/UI/Products/tab_screen.dart';
@@ -18,19 +20,21 @@ class Buy extends StatefulWidget{
 }
 
 class BuyTab extends State<Buy>{
+  static late BuyBloc buyBloc;
+
 
 
   @override
   void initState() {
-    // bloc = BuyBloc(context);
-    // bloc.getAllItems(2, 2);
+    buyBloc = BuyBloc(context);
+    setData();
   }
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return StreamBuilder(
-      stream: TabScreen.buyBloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<Result>> itemList) {
+      stream: buyBloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<ITEMS.Result>> itemList) {
       return GridView.builder(
           primary: true,
           padding: EdgeInsets.only(left: 10, right: 10,top: 10,bottom: 10),
@@ -146,5 +150,14 @@ class BuyTab extends State<Buy>{
           });
     },
     );
+  }
+
+  void setData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    UserProfile userprofile = Factory().getUserModel(prefs);
+    //
+    // rentBloc = RentBloc(context);
+    // rentBloc.getAllItems(1, userprofile.userID!);
+    buyBloc.getAllItems(2, userprofile.userID!);
   }
 }

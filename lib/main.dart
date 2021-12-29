@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +29,10 @@ class SplashScreenWidget extends State<SplashScreen2>
     late AnimationController controller;
 
 
+    @override
+  void initState() {
+      changeScreen(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +52,11 @@ class SplashScreenWidget extends State<SplashScreen2>
 
     });
 
-    changeScreen();
-
-
-
 
     return Builder(
       builder: (BuildContext context){
+
+
         return Scaffold(
                 backgroundColor: Colors.white,
                 body: Center(
@@ -80,16 +84,16 @@ class SplashScreenWidget extends State<SplashScreen2>
     );
   }
 
-  void changeScreen() async{
+  void changeScreen(BuildContext context) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     UserProfile userprofile = Factory().getUserModel(prefs);
 
     if(userprofile != null)
       {
-        Factory().changeScreenWithDelay(context, () => HomeScreen(),6);
+        Factory().changeScreenWithDelay(context, () => HomeScreen(0), 5);
       }
     else {
-      Factory().changeScreenWithDelay(context, () => LauncherScreen(),6);
+      Factory().changeScreenWithDelay(context, () => LauncherScreen(), 5);
     }
   }
 

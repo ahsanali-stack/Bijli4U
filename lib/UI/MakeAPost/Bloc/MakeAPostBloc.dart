@@ -175,7 +175,7 @@ class MakeAPostBloc implements ProgressDialogCodeListener {
     {
       Factory().showSnackbar(context, "Done");
 
-      Factory().finishScreenCompletely(context, () => HomeScreen());
+      Factory().finishScreenCompletely(context, () => HomeScreen(2));
 
       
     }else if(code == ConstantManager.ADD_ITEM_UNSUCCESS)

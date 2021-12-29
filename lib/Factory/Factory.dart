@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 import 'dart:ffi';
 
@@ -19,54 +17,51 @@ import '../ConstantManager/ConstantManager.dart';
 
 class Factory {
 
-  changeScreenWithDelay(BuildContext context, Widget Function() screen,int timeInSeconds) {
+  changeScreenWithDelay(BuildContext context, Widget Function() screen, int timeInSeconds) {
     Future.delayed(Duration(seconds: timeInSeconds), () {
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (BuildContext context) => screen()));
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) { return screen(); }));
     });
+
   }
 
-  finishScreenCompletely(BuildContext context,Widget Function() screen){
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-        builder: (BuildContext context) => screen()), (route) => false);
+  finishScreenCompletely(BuildContext context, Widget Function() screen) {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (BuildContext context) => screen()),
+        (route) => false);
   }
 
-  is_validated_fields (BuildContext context,List<String> list)
-  {
-    for(var value in list)
-    {
-      if(value==null && value.isEmpty)
-        {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("Empty Field's"),
-          ));
-          return false;
-        }
+  is_validated_fields(BuildContext context, List<String> list) {
+    for (var value in list) {
+      if (value == null && value.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Empty Field's"),
+        ));
+        return false;
+      }
     }
     return true;
   }
 
-  changeScreen(BuildContext context,Widget Function() screen)
-  {
+  changeScreen(BuildContext context, Widget Function() screen) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => screen()),
     );
   }
 
-  getHeightOfScreen(BuildContext context){
+  getHeightOfScreen(BuildContext context) {
     return MediaQuery.of(context).size.height;
   }
 
-  getWidthOfScreen(BuildContext context){
+  getWidthOfScreen(BuildContext context) {
     return MediaQuery.of(context).size.width;
   }
 
-  isValidEmail(email)
-  {
+  isValidEmail(email) {
     RegExp regEx = RegExp(ConstantManager.emailPattern);
-    if (regEx.hasMatch(email!))
-    {
+    if (regEx.hasMatch(email!)) {
       return true;
     }
     // else
@@ -89,8 +84,8 @@ class Factory {
   //
   //   return pr;
   // }
-  
-  Future<bool> is_connectivity_available(BuildContext context) async{
+
+  Future<bool> is_connectivity_available(BuildContext context) async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile) {
       // Factory().showSnackbar(context, "Mobile");
@@ -98,17 +93,16 @@ class Factory {
     } else if (connectivityResult == ConnectivityResult.wifi) {
       // Factory().showSnackbar(context, "Mobile");
       return true;
-    }
-    else{
+    } else {
       // Factory().showSnackbar(context, "Nothing");
       return false;
     }
   }
 
-  showSnackbar(BuildContext context,String message){
+  showSnackbar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(message),
-            ));
+      content: Text(message),
+    ));
   }
 
   bool isAndroid(BuildContext context) {
@@ -125,8 +119,7 @@ class Factory {
       return false;
   }
 
-  Future<void> getModel(BuildContext context,String model) async
-  {
+  Future<void> getModel(BuildContext context, String model) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     print('Running on ${androidInfo.model}');
@@ -165,8 +158,6 @@ class Factory {
     };
   }
 
-
-
   Map<String, dynamic> readIosDeviceInfo(IosDeviceInfo data) {
     return <String, dynamic>{
       'name': data.name,
@@ -184,24 +175,18 @@ class Factory {
     };
   }
 
-  getLoginResponse(LoginResponse loginResponse) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? value = prefs.getString(ConstantManager.USER_MODEL);
-    loginResponse = LoginResponse.fromJson(jsonDecode(value!));
-  }
-
-  get_string_date_from_unix(int time_in_seconds){
+  get_string_date_from_unix(int time_in_seconds) {
     final f = new DateFormat('dd-MM-yyyy');
 
-    return f.format(DateTime.fromMillisecondsSinceEpoch(time_in_seconds*1000));
+    return f
+        .format(DateTime.fromMillisecondsSinceEpoch(time_in_seconds * 1000));
   }
 
-  String get_image_url(String url)
-  {
+  String get_image_url(String url) {
     return "${ConstantManager.image_base_url}${url}";
   }
 
-  getDioOption(){
+  getDioOption() {
     return BaseOptions(
       baseUrl: ConstantManager.base_url,
       connectTimeout: 10000,
@@ -220,12 +205,16 @@ class Factory {
             child: Row(
               children: [
                 CircularProgressIndicator(),
-                Padding(padding: EdgeInsets.only(left: 20),
-                  child: Text("Please wait",
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Text(
+                    "Please wait",
                     style: TextStyle(
                       color: Color(colors.color_primary),
                       fontSize: 16,
-                    ),),)
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -234,12 +223,14 @@ class Factory {
       },
     );
   }
-  dismissProgressDialog(BuildContext context){
+
+  dismissProgressDialog(BuildContext context) {
     ConstantManager.isShowing = false;
     Navigator.of(context).pop();
   }
 
-  showImageDialog(BuildContext context,ProgressDialogCodeListener progressDialogCodeListener){
+  showImageDialog(BuildContext context,
+      ProgressDialogCodeListener progressDialogCodeListener) {
     showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -253,9 +244,9 @@ class Factory {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.of(_context).pop();
-                    getFromCamera(context,progressDialogCodeListener);
+                    getFromCamera(context, progressDialogCodeListener);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(10),
@@ -263,9 +254,9 @@ class Factory {
                   ),
                 ),
                 InkWell(
-                  onTap: (){
+                  onTap: () {
                     Navigator.of(_context).pop();
-                    getFromGallery(context,progressDialogCodeListener);
+                    getFromGallery(context, progressDialogCodeListener);
                   },
                   child: Padding(
                     padding: EdgeInsets.all(10),
@@ -281,7 +272,8 @@ class Factory {
     );
   }
 
-  getFromGallery(BuildContext context,ProgressDialogCodeListener listener) async {
+  getFromGallery(
+      BuildContext context, ProgressDialogCodeListener listener) async {
     final ImagePicker _picker = ImagePicker();
     // Pick an image
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -289,14 +281,14 @@ class Factory {
     if (image != null) {
       listener.onHide(ConstantManager.IMAGE_SUCCESS, "SUCCESS", image);
       // File? imageFile = File(pickedFile.path);
-    }
-    else {
-      listener.onHide(ConstantManager.IMAGE_UNSUCCESS, "SUCCESS", Null);
-
+    } else {
+      listener.onHide(
+          ConstantManager.IMAGE_UNSUCCESS, "Error while capturing image", Null);
     }
   }
 
-  getFromCamera(BuildContext context,ProgressDialogCodeListener listener) async {
+  getFromCamera(
+      BuildContext context, ProgressDialogCodeListener listener) async {
     final ImagePicker _picker = ImagePicker();
     // Pick an image
     final XFile? image = await _picker.pickImage(source: ImageSource.camera);
@@ -304,22 +296,36 @@ class Factory {
     if (image != null) {
       listener.onHide(ConstantManager.IMAGE_SUCCESS, "SUCCESS", image);
       // File? imageFile = File(pickedFile.path);
-    }
-    else {
-      listener.onHide(ConstantManager.IMAGE_UNSUCCESS, "SUCCESS", Null);
-
+    } else {
+      listener.onHide(
+          ConstantManager.IMAGE_UNSUCCESS, "Error while capturing image", Null);
     }
   }
 
-  getUserModel(SharedPreferences prefs){
+  getUserModel(SharedPreferences prefs) {
+    String? value = prefs.getString(ConstantManager.USER_MODEL);
+    var res;
+    if (value != null)
+      {
+        res = LoginResponse.fromJson(jsonDecode(value));
+      }
+
+    return res != null ? res.result!.userProfile! : null;
+  }
+
+  getLoginResponse(SharedPreferences prefs) {
     String? value = prefs.getString(ConstantManager.USER_MODEL);
     LoginResponse res = LoginResponse.fromJson(jsonDecode(value!));
-    return res != null ? res.result!.userProfile! : null;
+    return res != null ? res : null;
   }
 
   getController(String value) {
     TextEditingController controller = TextEditingController();
     controller.text = value;
     return controller;
+  }
+
+  void updateUserProfile(LoginResponse loginResponse, SharedPreferences prefs) {
+    prefs.setString(ConstantManager.USER_MODEL, jsonEncode(loginResponse));
   }
 }

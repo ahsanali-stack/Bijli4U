@@ -4,8 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
+import 'package:testproject/DataProvider/DataProvider.dart';
+import 'package:testproject/Factory/Factory.dart';
+import 'package:testproject/Models/Requests/add_enquiry.dart';
+import 'package:testproject/ProgressDialogCodeListener/ProgressDialogCodeListener.dart';
 
-class InquiryFormBloc {
+class InquiryFormBloc implements ProgressDialogCodeListener {
   InquiryFormBloc(this.context);
 
   final BuildContext context;
@@ -46,7 +50,10 @@ class InquiryFormBloc {
     showListDialog(107, ConstantManager.voltage_list);
   }
 
+  addEnquiry(AddEnquiry request) => DataProvider().addEnquiry(context, this, request);
 
+
+  //general dialog for list
   showListDialog(int code, List<String> list) {
     String title = "";
 
@@ -109,6 +116,31 @@ class InquiryFormBloc {
         return dialog;
       },
     );
+  }
+
+  @override
+  void onDismiss(String? error) {
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(context);
+  }
+
+  @override
+  void onHide(int code, String? message, Object data) {
+    if (ConstantManager.isShowing) Factory().dismissProgressDialog(context);
+
+    if(code == ConstantManager.ENQUIRY_SUCCESS)
+      {
+        Navigator.pop(context);
+        Factory().showSnackbar(context, "Your Inquiry has submitted");
+      }
+    else if(code == ConstantManager.ENQUIRY_UNSUCCESS)
+      {
+        Factory().showSnackbar(context, message!);
+      }
+  }
+
+  @override
+  void onShow() {
+    if (!ConstantManager.isShowing) Factory().showProgressDialog(context);
   }
 
 }

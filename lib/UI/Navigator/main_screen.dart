@@ -16,23 +16,27 @@ import '../Components/action_bar_home_screen.dart';
 
 
 class HomeScreen extends StatefulWidget {
+  final int current_index;
+  HomeScreen(this.current_index);
+
+
   @override
   State<StatefulWidget> createState() {
     return MainScreen();
   }
+
 }
 
 class MainScreen extends State<HomeScreen> with SingleTickerProviderStateMixin{
   final pages = [Home(),Favorites(),MakePost(),NotificationScreen(),Settings()];
   late MainScreenBloc bloc;
-  int current_index = 0;
 
 
 
   @override
   void initState() {
     bloc = MainScreenBloc();
-    bloc.onItemTap(0);
+    bloc.onItemTap(widget.current_index);
 
 
 

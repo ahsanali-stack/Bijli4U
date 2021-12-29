@@ -3,10 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
-import 'package:testproject/Models/Response/all_item_base_response.dart';
+import 'package:testproject/Models/Response/all_item_base_response.dart' as ITEMS;
+import 'package:testproject/Models/Response/login_response.dart';
 import 'package:testproject/UI/ProductDetails/product_details_screen.dart';
 import 'package:testproject/UI/Products/Bloc/RentBloc.dart';
 import 'package:testproject/UI/Products/tab_screen.dart';
@@ -21,12 +23,14 @@ class Rent extends StatefulWidget{
 
 class RentTab extends State<Rent>{
   final RefreshController controller = RefreshController();
+  static late RentBloc rentBloc;
 
 
 
   @override
   void initState() {
-
+    rentBloc = RentBloc(context);
+    setData();
   }
 
   @override
@@ -34,12 +38,12 @@ class RentTab extends State<Rent>{
     // TODO: implement build
     return SmartRefresher(
       onRefresh: (){
-        TabScreen.rentBloc.getAllItems(1, 2);
+        rentBloc.getAllItems(1, 2);
         controller.refreshCompleted();
       },
       controller: controller,
       child: StreamBuilder(
-      stream: TabScreen.rentBloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<Result>> itemList) {
+      stream: rentBloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<ITEMS.Result>> itemList) {
       return GridView.builder(
           primary: true,
           padding: EdgeInsets.only(left: 10, right: 10,top: 10,bottom: 10),
@@ -157,6 +161,15 @@ class RentTab extends State<Rent>{
     ),);
   }
 
- 
+  void setData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    UserProfile userprofile = Factory().getUserModel(prefs);
+    //
+    rentBloc.getAllItems(1, userprofile.userID!);
+    // buyBloc = BuyBloc(context);
+    // buyBloc.getAllItems(2, userprofile.userID!);
+  }
+
+
 
 }
