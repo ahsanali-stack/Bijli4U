@@ -8,6 +8,7 @@ import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/UI/Launcher/launcher_screen.dart';
 import 'package:testproject/UI/Navigator/main_screen.dart';
+import 'package:testproject/UI/SignIn/sign_in_screen.dart';
 
 import 'Models/Response/login_response.dart';
 
@@ -43,20 +44,14 @@ class SplashScreenWidget extends State<SplashScreen2>
 
       controller =
           AnimationController(vsync: this, duration: Duration(seconds: 3));
-
       offset = Tween<Offset>(begin: Offset(0, 20), end: Offset.zero)
           .animate(controller);
-
       controller.forward();
-
-
     });
 
 
     return Builder(
       builder: (BuildContext context){
-
-
         return Scaffold(
                 backgroundColor: Colors.white,
                 body: Center(
@@ -86,7 +81,7 @@ class SplashScreenWidget extends State<SplashScreen2>
 
   void changeScreen(BuildContext context) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    UserProfile userprofile = Factory().getUserModel(prefs);
+    UserProfile? userprofile = Factory().getUserModel(prefs);
 
     if(userprofile != null)
       {

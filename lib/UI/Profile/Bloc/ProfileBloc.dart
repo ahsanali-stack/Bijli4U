@@ -40,8 +40,8 @@ class ProfileBloc implements ProgressDialogCodeListener{
 
     if(code == ConstantManager.PROFILE_SUCCESS){
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      LoginResponse loginResponse = Factory().getLoginResponse(prefs);
-      loginResponse.result!.userProfile!.firstName = temp_model.firstName;
+      LoginResponse? loginResponse = Factory().getLoginResponse(prefs);
+      loginResponse!.result!.userProfile!.firstName = temp_model.firstName;
       loginResponse.result!.userProfile!.lastName = temp_model.lastName;
       loginResponse.result!.userProfile!.mobileNumber = temp_model.mobileNumber;
         loginResponse.result!.userProfile!.image = (data as UpdateProfileBaseResponse).result!.image;

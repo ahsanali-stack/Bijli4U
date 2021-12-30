@@ -37,19 +37,17 @@ class Screen extends State<Settings> {
 
   Future<void> getLoginResponse() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    UserProfile userprofile = Factory().getUserModel(prefs);
+    UserProfile? userprofile = Factory().getUserModel(prefs);
 
     setState(() {
       if (userprofile != null)
       {
         name = userprofile.userName;
         image = "${ConstantManager.image_base_url}${userprofile.image}";
-
       }
       else
       {
         isLogin = false;
-
       }
     });
 
@@ -73,7 +71,7 @@ class Screen extends State<Settings> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(50.0),
-                        child: Image.network(
+                        child: image != "" ? Image.network(
                           image!,
                           height: 100.0,
                           width: 100.0,
@@ -81,7 +79,7 @@ class Screen extends State<Settings> {
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(ConstantManager.no_preview,width: 100,height: 100,fit: BoxFit.fill,);
                           },
-                        ),
+                        ):Image.asset(ConstantManager.no_preview,width: 100,height: 100,fit: BoxFit.fill,),
                       ),
                       Padding(
                           padding: EdgeInsets.only(top: 20),

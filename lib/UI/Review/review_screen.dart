@@ -39,7 +39,7 @@ class Review extends State<ReviewScreen>{
         backgroundColor: Color(colors.color_primary),
       ),
       body: Padding(
-        padding: EdgeInsets.only(bottom: 50),
+        padding: EdgeInsets.only(bottom: 0),
     child: StreamBuilder(
       stream: bloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<Result>> itemList) {
       return GridView.builder(

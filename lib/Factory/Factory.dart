@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 
@@ -18,9 +19,9 @@ import '../ConstantManager/ConstantManager.dart';
 class Factory {
 
   changeScreenWithDelay(BuildContext context, Widget Function() screen, int timeInSeconds) {
-    Future.delayed(Duration(seconds: timeInSeconds), () {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (BuildContext context) { return screen(); }));
+    Timer(Duration(seconds: timeInSeconds),()=>{
+    Navigator.of(context).pushReplacement(
+    MaterialPageRoute(builder: (BuildContext context) { return screen(); }))
     });
 
   }
