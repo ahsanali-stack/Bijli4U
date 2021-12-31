@@ -406,7 +406,7 @@ class ProductDetails extends State<ProductDetailsScreen> {
         return Container(
             height: 120,
           child:  ListView.builder(
-            itemExtent: 220,
+            itemExtent: 300,
             padding: EdgeInsets.only(left: 10, right: 10,bottom: 0),
             itemCount: product_details_model.reviews != null && product_details_model.reviews!.length > 0 ? product_details_model.reviews!.length : 0,
             scrollDirection: Axis.horizontal,
@@ -423,7 +423,7 @@ class ProductDetails extends State<ProductDetailsScreen> {
                       Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text("${product_details_model.reviews![index].userName}",style: TextStyle(fontSize: 16,color: Color(colors.color_primary),fontFamily: 'Trebuc'),),
+                          Text("${product_details_model.reviews![index].userName}",maxLines: 1,overflow: TextOverflow.ellipsis,style: TextStyle(fontSize: 16,color: Color(colors.color_primary),fontFamily: 'Trebuc'),),
                           Padding(padding: EdgeInsets.only(left: 20),child: RatingBar.builder(
                             ignoreGestures: true,
                             glow: false,
