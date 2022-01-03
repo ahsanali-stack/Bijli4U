@@ -9,6 +9,7 @@ import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/ConstantManager/ConstantManager.dart';
 import 'package:testproject/Factory/Factory.dart';
 import 'package:testproject/Models/Response/login_response.dart';
+import 'package:testproject/UI/Maps/map_screen.dart';
 
 class ActionBarHomeScreen {
   PreferredSizeWidget getActionBar(BuildContext context){
@@ -52,7 +53,12 @@ class ActionBarHomeScreen {
             },
             child: Padding(
               padding: EdgeInsets.only(right:4 ),
-              child: Icon(Icons.share_location_rounded),
+              child: GestureDetector(
+                onTap: (){
+                  Factory().changeScreen(context, () => MapScreen());
+                },
+                child: Icon(Icons.share_location_rounded),
+              ),
             )
         )
       ],

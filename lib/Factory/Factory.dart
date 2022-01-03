@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:device_info/device_info.dart';
@@ -9,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:testproject/Colors/Colors.dart';
 import 'package:testproject/Models/Response/login_response.dart';
@@ -328,5 +328,27 @@ class Factory {
 
   void updateUserProfile(LoginResponse loginResponse, SharedPreferences prefs) {
     prefs.setString(ConstantManager.USER_MODEL, jsonEncode(loginResponse));
+  }
+
+  Future<bool> isLocationPermissionGranted() async{
+    var _permissionGranted = await Location().hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await Location().requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<bool> isLocationServiceEnable() async{
+    var _serviceEnabled = await Location().serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await Location().requestService();
+      if (!_serviceEnabled) {
+        return false;
+      }
+    }
+    return true;
   }
 }
