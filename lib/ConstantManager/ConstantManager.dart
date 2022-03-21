@@ -21,9 +21,11 @@ class ConstantManager {
 
   static const String slogan =
       "Explore million's of Energy & Power Equipment's";
+  // static const String base_url =
+  //     'http://203.170.74.138:83/api/';
   static const String base_url =
-      'http://203.170.74.138:83/api/';
-  static const String image_base_url = "http://203.170.74.138:83/";
+      'http://173.212.233.166/api/';
+  static const String image_base_url = "http://173.212.233.166";
   static const String no_image_url = "https://st3.depositphotos.com/23594922/31822/v/600/depositphotos_318221368-stock-illustration-missing-picture-page-for-website.jpg";
   static var maskCnicFormatter = MaskTextInputFormatter(
       mask: '#####-#######-#', filter: {"#": RegExp(r'[0-9]')});

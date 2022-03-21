@@ -446,7 +446,7 @@ class ProductDetails extends State<ProductDetailsScreen> {
                           ),),
                         ],
                       ),
-                      Padding(padding: EdgeInsets.only(top: 10),child: Text("Comments Comments Comments Comments Comments dsadsa ${product_details_model.reviews![index].comments}",style: TextStyle(fontSize: 14,color: Color(colors.color_primary),fontFamily: 'Trebuc'),overflow: TextOverflow.ellipsis,maxLines: 3,),)
+                      Padding(padding: EdgeInsets.only(top: 10),child: Text("${product_details_model.reviews![index].comments}",style: TextStyle(fontSize: 14,color: Color(colors.color_primary),fontFamily: 'Trebuc'),overflow: TextOverflow.ellipsis,maxLines: 3,),)
                     ],
                   ),
                 ),
