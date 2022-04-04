@@ -158,6 +158,6 @@ class BuyTab extends State<Buy>{
     //
     // rentBloc = RentBloc(context);
     // rentBloc.getAllItems(1, userprofile.userID!);
-    buyBloc.getAllItems(2, userprofile.userID!);
+    buyBloc.getAllItems(1, userprofile.userID!);
   }
 }

@@ -38,12 +38,13 @@ class RentTab extends State<Rent>{
     // TODO: implement build
     return SmartRefresher(
       onRefresh: (){
-        rentBloc.getAllItems(1, 2);
+        rentBloc.getAllItems(2, 2);
         controller.refreshCompleted();
       },
       controller: controller,
       child: StreamBuilder(
-      stream: rentBloc.itemsList.stream, builder: (BuildContext context, AsyncSnapshot<List<ITEMS.Result>> itemList) {
+      stream: rentBloc.itemsList.stream,
+        builder: (BuildContext context, AsyncSnapshot<List<ITEMS.Result>> itemList) {
       return GridView.builder(
           primary: true,
           padding: EdgeInsets.only(left: 10, right: 10,top: 10,bottom: 10),
@@ -165,7 +166,7 @@ class RentTab extends State<Rent>{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     UserProfile userprofile = Factory().getUserModel(prefs);
     //
-    rentBloc.getAllItems(1, userprofile.userID!);
+    rentBloc.getAllItems(2, userprofile.userID!);
     // buyBloc = BuyBloc(context);
     // buyBloc.getAllItems(2, userprofile.userID!);
   }
